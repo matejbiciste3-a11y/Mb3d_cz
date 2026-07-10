@@ -97,6 +97,16 @@ nav {
     letter-spacing: 2px;
 }
 
+.logo-text {
+    font-size: 28px;
+    font-weight: 900;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 3px;
+    text-decoration: none;
+}
+
 nav ul {
     display: flex;
     list-style: none;
@@ -211,6 +221,19 @@ header {
 }
 
 header h1 {
+    font-size: 72px;
+    font-weight: 900;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 12px;
+    margin: 10px 0;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 1s ease;
+}
+
+.main-title {
     font-size: 72px;
     font-weight: 900;
     background: var(--primary-gradient);
@@ -366,13 +389,41 @@ h2 i {
     margin-right: 10px;
 }
 
+/* ==========================================
+   FILAMENT GRID - 6 vedle sebe
+   ========================================== */
 .filament-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
     margin: 30px 0;
 }
 
+@media (max-width: 1200px) {
+    .filament-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .filament-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .filament-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .filament-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* KARTA FILAMENTU */
 .filament-card {
     background: var(--bg-secondary);
     border-radius: var(--radius);
@@ -383,15 +434,15 @@ h2 i {
 }
 
 .filament-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
     border-color: var(--primary);
-    box-shadow: var(--shadow-glow-strong);
+    box-shadow: var(--shadow-glow);
     background: var(--bg-card-hover);
 }
 
 .filament-image {
     position: relative;
-    height: 160px;
+    height: 120px;
     background: var(--bg-card);
     display: flex;
     align-items: center;
@@ -412,66 +463,67 @@ h2 i {
 
 .filament-image .delete-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
     background: rgba(255,0,0,0.85);
     color: #fff;
     border: none;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 12px;
     backdrop-filter: blur(10px);
 }
 
 .filament-image .delete-btn:hover {
     transform: scale(1.15);
     background: #ff0000;
-    box-shadow: 0 0 30px rgba(255,0,0,0.4);
+    box-shadow: 0 0 20px rgba(255,0,0,0.4);
 }
 
 .filament-info {
-    padding: 18px 20px 20px;
+    padding: 12px 14px 14px;
 }
 
 .filament-info h3 {
     color: var(--text-primary);
-    margin: 0 0 4px 0;
-    font-size: 18px;
+    margin: 0 0 2px 0;
+    font-size: 15px;
     font-weight: 700;
 }
 
 .filament-info .color {
     font-weight: 600;
-    margin-bottom: 6px;
-    font-size: 14px;
+    margin-bottom: 4px;
+    font-size: 13px;
 }
 
 .filament-info .material,
 .filament-info .weight {
     color: var(--text-secondary);
-    font-size: 13px;
-    margin: 3px 0;
+    font-size: 12px;
+    margin: 2px 0;
 }
 
 .filament-info .material i,
 .filament-info .weight i {
     color: var(--primary);
-    width: 18px;
+    width: 16px;
+    font-size: 12px;
 }
 
 .meter-info {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-secondary);
-    margin: 12px 0 8px 0;
-    padding: 8px 0;
+    margin: 8px 0 6px 0;
+    padding: 6px 0;
     border-top: 1px solid var(--border-color);
 }
 
@@ -481,11 +533,11 @@ h2 i {
 
 .progress-bar {
     width: 100%;
-    height: 6px;
+    height: 5px;
     background: var(--bg-card);
     border-radius: 3px;
     overflow: hidden;
-    margin: 5px 0 8px 0;
+    margin: 4px 0 6px 0;
 }
 
 .progress-fill {
@@ -495,10 +547,13 @@ h2 i {
 }
 
 .spotreba {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
 }
 
+/* ==========================================
+   FILTRY
+   ========================================== */
 .filters {
     display: flex;
     gap: 12px;
@@ -557,6 +612,9 @@ h2 i {
     transform: scale(1.05);
 }
 
+/* ==========================================
+   FORMULÁŘE
+   ========================================== */
 .form-card {
     background: var(--bg-secondary);
     padding: 28px;
@@ -691,6 +749,9 @@ h2 i {
     margin-bottom: 12px;
 }
 
+/* ==========================================
+   CENÍK
+   ========================================== */
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -798,9 +859,12 @@ h2 i {
     font-size: 20px;
 }
 
+/* ==========================================
+   STL
+   ========================================== */
 .stl-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 25px;
     margin: 30px 0;
 }
@@ -841,6 +905,9 @@ h2 i {
     justify-content: center;
 }
 
+/* ==========================================
+   KALKULAČKA NÁKLADŮ
+   ========================================== */
 .cost-calculator {
     background: var(--bg-secondary);
     padding: 30px;
@@ -864,6 +931,9 @@ h2 i {
     font-weight: 700;
 }
 
+/* ==========================================
+   PŘIHLÁŠENÍ
+   ========================================== */
 .login-container {
     display: flex;
     justify-content: center;
@@ -948,6 +1018,9 @@ h2 i {
     justify-content: center;
 }
 
+/* ==========================================
+   AUTH GUARD
+   ========================================== */
 #authGuard {
     text-align: center;
     padding: 60px 20px;
@@ -989,6 +1062,9 @@ h2 i {
     display: none;
 }
 
+/* ==========================================
+   FOOTER
+   ========================================== */
 footer {
     text-align: center;
     padding: 30px;
@@ -998,6 +1074,9 @@ footer {
     font-size: 14px;
 }
 
+/* ==========================================
+   ANIMACE
+   ========================================== */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -1009,6 +1088,9 @@ footer {
     }
 }
 
+/* ==========================================
+   RESPONZIVITA
+   ========================================== */
 @media (max-width: 768px) {
     nav {
         padding: 12px 20px;
@@ -1077,10 +1159,6 @@ footer {
     
     .stat-number {
         font-size: 30px;
-    }
-    
-    .filament-grid {
-        grid-template-columns: 1fr;
     }
     
     .pricing-grid {
