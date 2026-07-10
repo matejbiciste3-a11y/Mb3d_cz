@@ -1,3 +1,5 @@
+const supabase = window.supabase;
+
 if (typeof supabase === 'undefined' || !supabase.auth) {
     console.error('Supabase není inicializován');
 } else {
@@ -43,6 +45,45 @@ async function uploadImage(file) {
             .getPublicUrl(filePath);
         
         console.log('Obrázek nahrán:', urlData.publicUrl);
+        return urlData.publicUrl;
+    } catch (error) {
+        console.error('Chyba:', error);
+        return null;
+    }
+}
+
+async function uploadStlFile(file) {
+    if (!file) return null;
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return null;
+        }
+        
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `stl/${fileName}`;
+        
+        const { data, error } = await supabase.storage
+            .from('stl-soubory')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+        
+        if (error) {
+            console.error('Chyba nahrávání STL:', error);
+            alert('Chyba nahrávání STL: ' + error.message);
+            return null;
+        }
+        
+        const { data: urlData } = supabase.storage
+            .from('stl-soubory')
+            .getPublicUrl(filePath);
+        
+        console.log('STL nahrán:', urlData.publicUrl);
         return urlData.publicUrl;
     } catch (error) {
         console.error('Chyba:', error);
@@ -611,6 +652,7 @@ function searchGlobal() {
     const filter = input.value.toLowerCase();
     const cards = document.querySelectorAll('.filament-card');
     const models = document.querySelectorAll('.model-card');
+    const stl = document.querySelectorAll('.stl-card');
     
     cards.forEach(card => {
         const text = card.textContent.toLowerCase();
@@ -622,6 +664,15 @@ function searchGlobal() {
     });
     
     models.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(filter)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    stl.forEach(card => {
         const text = card.textContent.toLowerCase();
         if (text.includes(filter)) {
             card.style.display = '';
@@ -887,7 +938,282 @@ async function deleteModelFromEdit() {
         
         console.log('Model smazán!');
         alert('Model byl úspěšně smazán!');
-        loadModels();
+        await loadModels();
+        
+    } catch (error) {
+        console.error('Chyba:', error);
+        alert('Chyba: ' + error.message);
+    }
+}
+
+async function loadStl() {
+    try {
+        const token = await getAccessToken();
+        const headers = {
+            'apikey': CONFIG.SUPABASE_KEY,
+            'Content-Type': 'application/json'
+        };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/stl_soubory`, { headers });
+        const data = await response.json();
+        console.log('STL načteno:', data.length);
+        
+        const grid = document.getElementById('stlGrid');
+        if (grid) {
+            grid.innerHTML = '';
+            
+            if (data.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-box-open" style="font-size: 48px; color: var(--primary);"></i>
+                        <p style="margin-top: 15px;">Zatím žádné STL soubory. Přidej první!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            data.forEach(s => {
+                const editButton = isAdmin() ? 
+                    `<button onclick="openEditStlModal(${s.id})" class="edit-btn" title="Upravit STL">
+                        <i class="fas fa-pen"></i>
+                    </button>` : 
+                    '';
+                
+                grid.innerHTML += `
+                    <div class="stl-card">
+                        <div class="stl-image">
+                            <img src="${s.obrazek || 'https://placehold.co/300x200/333333/FFFFFF?text=STL'}" 
+                                 alt="${s.nazev}" 
+                                 onerror="this.src='https://placehold.co/300x200/333333/FFFFFF?text=STL'">
+                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
+                                ${editButton}
+                            </div>
+                        </div>
+                        <div class="stl-info">
+                            <h3>${s.nazev}</h3>
+                            ${s.popis ? `<p class="stl-popis">${s.popis}</p>` : ''}
+                            <div class="stl-price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${s.cena || 0} Kč</div>
+                            <a href="${s.stl_url}" target="_blank" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                                <i class="fas fa-download"></i> Stáhnout STL
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    } catch (error) {
+        console.error('Chyba načítání STL:', error);
+    }
+}
+
+document.getElementById('addStlForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const token = await getAccessToken();
+    if (!token) {
+        alert('Nejsi přihlášen!');
+        return;
+    }
+    
+    const stlFile = document.getElementById('stlFile').files[0];
+    if (!stlFile) {
+        alert('Vyber STL soubor!');
+        return;
+    }
+    
+    const stlUrl = await uploadStlFile(stlFile);
+    if (!stlUrl) return;
+    
+    const imageFile = document.getElementById('stlImageFile').files[0];
+    let imageUrl = document.getElementById('stlObrazek').value || null;
+    
+    if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) {
+            imageUrl = uploadedUrl;
+        }
+    }
+    
+    const data = {
+        nazev: document.getElementById('stlNazev').value,
+        popis: document.getElementById('stlPopis').value || null,
+        cena: parseFloat(document.getElementById('stlCena').value) || 0,
+        obrazek: imageUrl,
+        stl_url: stlUrl
+    };
+
+    try {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/stl_soubory`, {
+            method: 'POST',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba:', response.status, errorData);
+            alert('Chyba: ' + response.status);
+            return;
+        }
+        
+        alert('STL přidán!');
+        loadStl();
+        e.target.reset();
+    } catch (error) {
+        alert('Chyba: ' + error.message);
+        console.error(error);
+    }
+});
+
+async function openEditStlModal(id) {
+    console.log('Otevírám editaci STL ID:', id);
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/stl_soubory?id=eq.${id}`, {
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        const stl = data[0];
+        
+        if (!stl) {
+            alert('STL nenalezen!');
+            return;
+        }
+        
+        document.getElementById('editStlId').value = stl.id;
+        document.getElementById('editStlNazev').value = stl.nazev;
+        document.getElementById('editStlCena').value = stl.cena || 0;
+        document.getElementById('editStlPopis').value = stl.popis || '';
+        document.getElementById('editStlObrazek').value = stl.obrazek || '';
+        document.getElementById('editStlFile').value = '';
+        document.getElementById('editStlImageFile').value = '';
+        
+        document.getElementById('editModal').style.display = 'flex';
+        
+    } catch (error) {
+        console.error('Chyba při načítání STL:', error);
+        alert('Chyba: ' + error.message);
+    }
+}
+
+document.getElementById('editStlForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const id = document.getElementById('editStlId').value;
+    const token = await getAccessToken();
+    if (!token) {
+        alert('Nejsi přihlášen!');
+        return;
+    }
+    
+    let stlUrl = null;
+    const stlFile = document.getElementById('editStlFile').files[0];
+    
+    if (stlFile) {
+        const uploadedUrl = await uploadStlFile(stlFile);
+        if (uploadedUrl) {
+            stlUrl = uploadedUrl;
+        }
+    }
+    
+    const imageFile = document.getElementById('editStlImageFile').files[0];
+    let imageUrl = document.getElementById('editStlObrazek').value || null;
+    
+    if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) {
+            imageUrl = uploadedUrl;
+        }
+    }
+    
+    const data = {
+        nazev: document.getElementById('editStlNazev').value,
+        popis: document.getElementById('editStlPopis').value || null,
+        cena: parseFloat(document.getElementById('editStlCena').value) || 0,
+        obrazek: imageUrl
+    };
+    
+    if (stlUrl) data.stl_url = stlUrl;
+
+    try {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/stl_soubory?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba:', response.status, errorData);
+            alert('Chyba: ' + response.status);
+            return;
+        }
+        
+        alert('STL upraven!');
+        closeEditModal();
+        loadStl();
+    } catch (error) {
+        alert('Chyba: ' + error.message);
+        console.error(error);
+    }
+});
+
+async function deleteStlFromEdit() {
+    const id = document.getElementById('editStlId').value;
+    if (!id) {
+        alert('Chyba: ID STL nebylo nalezeno!');
+        return;
+    }
+    
+    closeEditModal();
+    
+    if (!confirm('Opravdu smazat tento STL soubor?')) {
+        return;
+    }
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/stl_soubory?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba při mazání:', response.status, errorData);
+            alert('Chyba: ' + response.status);
+            return;
+        }
+        
+        alert('STL smazán!');
+        loadStl();
         
     } catch (error) {
         console.error('Chyba:', error);
@@ -915,6 +1241,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         if (document.getElementById('modelsGrid')) {
             loadModels();
+        }
+        if (document.getElementById('stlGrid')) {
+            loadStl();
         }
     } else {
         console.error('Supabase není inicializován!');
