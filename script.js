@@ -1101,13 +1101,27 @@ async function openEditStlModal(id) {
             return;
         }
         
-        document.getElementById('editStlId').value = stl.id;
-        document.getElementById('editStlNazev').value = stl.nazev;
-        document.getElementById('editStlCena').value = stl.cena || 0;
-        document.getElementById('editStlPopis').value = stl.popis || '';
-        document.getElementById('editStlObrazek').value = stl.obrazek || '';
-        document.getElementById('editStlFile').value = '';
-        document.getElementById('editStlImageFile').value = '';
+        const idEl = document.getElementById('editStlId');
+        const nazevEl = document.getElementById('editStlNazev');
+        const cenaEl = document.getElementById('editStlCena');
+        const popisEl = document.getElementById('editStlPopis');
+        const obrazekEl = document.getElementById('editStlObrazek');
+        const fileEl = document.getElementById('editStlFile');
+        const imageFileEl = document.getElementById('editStlImageFile');
+        
+        if (!idEl || !nazevEl || !cenaEl) {
+            console.error('Chybí elementy v edit formuláři!');
+            alert('Chyba: Formulář pro editaci není kompletní!');
+            return;
+        }
+        
+        idEl.value = stl.id;
+        nazevEl.value = stl.nazev;
+        cenaEl.value = stl.cena || 0;
+        if (popisEl) popisEl.value = stl.popis || '';
+        if (obrazekEl) obrazekEl.value = stl.obrazek || '';
+        if (fileEl) fileEl.value = '';
+        if (imageFileEl) imageFileEl.value = '';
         
         document.getElementById('editModal').style.display = 'flex';
         
