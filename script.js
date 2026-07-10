@@ -234,7 +234,7 @@ async function loadFilaments() {
             
             if (data.length === 0) {
                 grid.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
                         <i class="fas fa-box-open" style="font-size: 48px; color: var(--primary);"></i>
                         <p style="margin-top: 15px;">Zatím žádné filamenty. Přidej první!</p>
                     </div>
@@ -242,66 +242,47 @@ async function loadFilaments() {
                 return;
             }
             
-            let html = `
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: var(--radius); overflow: hidden;">
-                        <thead>
-                            <tr style="background: var(--bg-card); border-bottom: 2px solid var(--primary);">
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Výrobce</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Barva</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Materiál</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Kg</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Cena/kg</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Základ</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Aktuální</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Spotřeba</th>
-                                <th style="padding: 12px 16px; text-align: left; color: var(--primary); font-weight: 700;">Akce</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
             data.forEach(f => {
                 const spotreba = f.zaklad > 0 ? Math.round((1 - f.aktualni / f.zaklad) * 100) : 0;
                 const progressColor = spotreba > 80 ? '#ff4444' : spotreba > 50 ? '#ffaa00' : '#00cc66';
+                const cena = f.cena_kg || 0;
                 
                 const editButton = isAdmin() ? 
-                    `<button onclick="openEditModal(${f.id})" class="edit-btn" title="Upravit filament" style="background: rgba(255,107,0,0.85); color: #fff; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-pen" style="font-size: 13px;"></i>
+                    `<button onclick="openEditModal(${f.id})" class="edit-btn" title="Upravit filament">
+                        <i class="fas fa-pen"></i>
                     </button>` : 
                     '';
                 
-                html += `
-                    <tr style="border-bottom: 1px solid var(--border-color); transition: var(--transition);">
-                        <td style="padding: 10px 16px; color: var(--text-primary);">${f.vyrobce}</td>
-                        <td style="padding: 10px 16px; color: ${f.barva}; font-weight: 600;">${f.barva}</td>
-                        <td style="padding: 10px 16px; color: var(--text-secondary);">${f.material}</td>
-                        <td style="padding: 10px 16px; color: var(--text-secondary);">${f.kg}</td>
-                        <td style="padding: 10px 16px; color: #ffd700; font-weight: 700;">${f.cena_kg || 0} Kč</td>
-                        <td style="padding: 10px 16px; color: var(--text-secondary);">${f.zaklad}m</td>
-                        <td style="padding: 10px 16px; color: var(--text-primary); font-weight: 600;">${f.aktualni}m</td>
-                        <td style="padding: 10px 16px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="flex: 1; height: 6px; background: var(--bg-card); border-radius: 4px; overflow: hidden;">
-                                    <div style="width: ${spotreba}%; height: 100%; background: ${progressColor}; border-radius: 4px; transition: width 0.8s ease;"></div>
-                                </div>
-                                <span style="color: ${progressColor}; font-weight: 600; font-size: 13px; min-width: 40px;">${spotreba}%</span>
+                grid.innerHTML += `
+                    <div class="filament-card">
+                        <div class="filament-image">
+                            <img src="${f.obrazek || 'https://placehold.co/200x140/333333/FFFFFF?text=3D'}" 
+                                 alt="${f.vyrobce} ${f.barva}" 
+                                 onerror="this.src='https://placehold.co/200x140/333333/FFFFFF?text=3D'">
+                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
+                                ${editButton}
                             </div>
-                        </td>
-                        <td style="padding: 10px 16px;">
-                            ${editButton}
-                        </td>
-                    </tr>
+                        </div>
+                        <div class="filament-info">
+                            <h3>${f.vyrobce}</h3>
+                            <p class="color" style="color: ${f.barva}">${f.barva}</p>
+                            <p class="material"><i class="fas fa-cog"></i> ${f.material}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 0;">
+                                <span class="weight"><i class="fas fa-weight"></i> ${f.kg} kg</span>
+                                <span class="price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${cena} Kč/kg</span>
+                            </div>
+                            <div class="meter-info">
+                                <span>Základ: ${f.zaklad}m</span>
+                                <span>Aktuální: <strong>${f.aktualni}m</strong></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${spotreba}%; background: ${progressColor};"></div>
+                            </div>
+                            <span class="spotreba" style="color: ${progressColor}">${spotreba}% spotřebováno</span>
+                        </div>
+                    </div>
                 `;
             });
-            
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            grid.innerHTML = html;
 
             const select = document.getElementById('filamentSelect');
             if (select) {
@@ -587,22 +568,22 @@ function filterFilaments() {
     const material = document.getElementById('filterMaterial').value;
     const color = document.getElementById('filterColor').value;
     
-    const rows = document.querySelectorAll('#filamentGrid table tbody tr');
-    rows.forEach(row => {
-        const materialText = row.cells[2]?.textContent || '';
-        const colorText = row.cells[1]?.textContent || '';
+    const cards = document.querySelectorAll('.filament-card');
+    cards.forEach(card => {
+        const materialText = card.querySelector('.material')?.textContent || '';
+        const colorText = card.querySelector('.color')?.textContent || '';
         let show = true;
         if (material && !materialText.includes(material)) show = false;
         if (color && !colorText.includes(color)) show = false;
-        row.style.display = show ? '' : 'none';
+        card.style.display = show ? '' : 'none';
     });
 }
 
 function resetFilters() {
     document.getElementById('filterMaterial').value = '';
     document.getElementById('filterColor').value = '';
-    document.querySelectorAll('#filamentGrid table tbody tr').forEach(row => {
-        row.style.display = '';
+    document.querySelectorAll('.filament-card').forEach(card => {
+        card.style.display = '';
     });
 }
 
@@ -611,14 +592,14 @@ function searchFilaments() {
     if (!input) return;
     
     const filter = input.value.toLowerCase();
-    const rows = document.querySelectorAll('#filamentGrid table tbody tr');
+    const cards = document.querySelectorAll('.filament-card');
     
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
         if (text.includes(filter)) {
-            row.style.display = '';
+            card.style.display = '';
         } else {
-            row.style.display = 'none';
+            card.style.display = 'none';
         }
     });
 }
@@ -628,15 +609,15 @@ function searchGlobal() {
     if (!input) return;
     
     const filter = input.value.toLowerCase();
-    const rows = document.querySelectorAll('#filamentGrid table tbody tr');
+    const cards = document.querySelectorAll('.filament-card');
     const models = document.querySelectorAll('.model-card');
     
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
         if (text.includes(filter)) {
-            row.style.display = '';
+            card.style.display = '';
         } else {
-            row.style.display = 'none';
+            card.style.display = 'none';
         }
     });
     
@@ -695,7 +676,7 @@ async function loadModels() {
             
             data.forEach(m => {
                 const editButton = isAdmin() ? 
-                    `<button onclick="openEditModelModal(${m.id})" class="edit-btn" title="Upravit model" style="position: absolute; top: 8px; right: 8px; background: rgba(255,107,0,0.85); color: #fff; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; font-size: 13px; backdrop-filter: blur(10px);">
+                    `<button onclick="openEditModelModal(${m.id})" class="edit-btn" title="Upravit model">
                         <i class="fas fa-pen"></i>
                     </button>` : 
                     '';
@@ -706,7 +687,9 @@ async function loadModels() {
                             <img src="${m.obrazek || 'https://placehold.co/300x200/333333/FFFFFF?text=Model'}" 
                                  alt="${m.nazev}" 
                                  onerror="this.src='https://placehold.co/300x200/333333/FFFFFF?text=Model'">
-                            ${editButton}
+                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
+                                ${editButton}
+                            </div>
                         </div>
                         <div class="model-info">
                             <h3>${m.nazev}</h3>
