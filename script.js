@@ -474,13 +474,18 @@ document.getElementById('editFilamentForm')?.addEventListener('submit', async (e
     }
 });
 
-async function deleteFilamentFromEdit() {
+async function deleteFromEdit() {
     const id = document.getElementById('editId').value;
-    if (!id) return;
+    if (!id) {
+        alert('❌ Chyba: ID filamentu nebylo nalezeno!');
+        return;
+    }
     
     closeEditModal();
     
-    if (!confirm('🗑️ Opravdu smazat tento filament?')) return;
+    if (!confirm('🗑️ Opravdu smazat tento filament?')) {
+        return;
+    }
     
     try {
         const token = await getAccessToken();
@@ -488,6 +493,8 @@ async function deleteFilamentFromEdit() {
             alert('❌ Nejsi přihlášen!');
             return;
         }
+        
+        console.log('🗑️ Mažu filament ID:', id);
         
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
             method: 'DELETE',
@@ -501,11 +508,12 @@ async function deleteFilamentFromEdit() {
         if (!response.ok) {
             const errorData = await response.text();
             console.error('❌ Chyba při mazání:', response.status, errorData);
-            alert(`❌ Chyba: ${response.status}`);
+            alert(`❌ Chyba: ${response.status} - ${errorData}`);
             return;
         }
         
-        alert('✅ Filament smazán!');
+        console.log('✅ Filament smazán!');
+        alert('✅ Filament byl úspěšně smazán!');
         loadFilaments();
         
     } catch (error) {
