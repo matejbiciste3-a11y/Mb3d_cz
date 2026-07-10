@@ -1,3 +1,5 @@
+const supabase = window.supabase;
+
 if (typeof supabase === 'undefined' || !supabase.auth) {
     console.error('❌ Supabase není inicializován! Zkontroluj config.js a pořadí skriptů.');
 } else {
@@ -9,6 +11,45 @@ let currentUser = null;
 async function getAccessToken() {
     const { data: sessionData } = await supabase.auth.getSession();
     return sessionData?.session?.access_token;
+}
+
+async function uploadImage(file) {
+    if (!file) return null;
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('❌ Nejsi přihlášen!');
+            return null;
+        }
+        
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `filamenty/${fileName}`;
+        
+        const { data, error } = await supabase.storage
+            .from('filament-images')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+        
+        if (error) {
+            console.error('❌ Chyba nahrávání:', error);
+            alert('❌ Chyba nahrávání: ' + error.message);
+            return null;
+        }
+        
+        const { data: urlData } = supabase.storage
+            .from('filament-images')
+            .getPublicUrl(filePath);
+        
+        console.log('✅ Obrázek nahrán:', urlData.publicUrl);
+        return urlData.publicUrl;
+    } catch (error) {
+        console.error('❌ Chyba:', error);
+        return null;
+    }
 }
 
 async function checkUser() {
@@ -206,6 +247,7 @@ async function loadFilaments() {
             data.forEach(f => {
                 const spotreba = f.zaklad > 0 ? Math.round((1 - f.aktualni / f.zaklad) * 100) : 0;
                 const progressColor = spotreba > 80 ? '#ff4444' : spotreba > 50 ? '#ffaa00' : '#00cc66';
+                const cena = f.cena_kg || 0;
                 
                 const editButton = isAdmin() ? 
                     `<button onclick="openEditModal(${f.id})" class="edit-btn" title="Upravit filament">
@@ -234,7 +276,10 @@ async function loadFilaments() {
                             <h3>${f.vyrobce}</h3>
                             <p class="color" style="color: ${f.barva}">${f.barva}</p>
                             <p class="material"><i class="fas fa-cog"></i> ${f.material}</p>
-                            <p class="weight"><i class="fas fa-weight"></i> ${f.kg} kg</p>
+                            <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+                                <span class="weight"><i class="fas fa-weight"></i> ${f.kg} kg</span>
+                                <span class="price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${cena} Kč/kg</span>
+                            </div>
                             <div class="meter-info">
                                 <span>Základ: ${f.zaklad}m</span>
                                 <span>Aktuální: <strong>${f.aktualni}m</strong></span>
@@ -252,7 +297,7 @@ async function loadFilaments() {
             if (select) {
                 select.innerHTML = '<option value="">-- Vyber filament --</option>';
                 data.forEach(f => {
-                    select.innerHTML += `<option value="${f.id}">${f.vyrobce} - ${f.barva} (${f.aktualni}m)</option>`;
+                    select.innerHTML += `<option value="${f.id}">${f.vyrobce} - ${f.barva} (${f.aktualni}m) - ${f.cena_kg || 0} Kč/kg</option>`;
                 });
             }
 
@@ -278,14 +323,25 @@ document.getElementById('addFilamentForm')?.addEventListener('submit', async (e)
         return;
     }
     
+    const imageFile = document.getElementById('imageFile').files[0];
+    let imageUrl = document.getElementById('obrazek').value || null;
+    
+    if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) {
+            imageUrl = uploadedUrl;
+        }
+    }
+    
     const data = {
         vyrobce: document.getElementById('vyrobce').value,
         barva: document.getElementById('barva').value,
         material: document.getElementById('material').value,
         kg: parseFloat(document.getElementById('kg').value),
+        cena_kg: parseFloat(document.getElementById('cena_kg').value) || 0,
         zaklad: parseFloat(document.getElementById('zaklad').value),
         aktualni: parseFloat(document.getElementById('aktualni').value),
-        obrazek: document.getElementById('obrazek').value || null
+        obrazek: imageUrl
     };
 
     try {
@@ -344,9 +400,11 @@ async function openEditModal(id) {
         document.getElementById('editBarva').value = filament.barva;
         document.getElementById('editMaterial').value = filament.material;
         document.getElementById('editKg').value = filament.kg;
+        document.getElementById('editCenaKg').value = filament.cena_kg || 0;
         document.getElementById('editZaklad').value = filament.zaklad;
         document.getElementById('editAktualni').value = filament.aktualni;
         document.getElementById('editObrazek').value = filament.obrazek || '';
+        document.getElementById('editImageFile').value = '';
         
         document.getElementById('editModal').style.display = 'flex';
         
@@ -370,14 +428,25 @@ document.getElementById('editFilamentForm')?.addEventListener('submit', async (e
         return;
     }
     
+    const imageFile = document.getElementById('editImageFile').files[0];
+    let imageUrl = document.getElementById('editObrazek').value || null;
+    
+    if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) {
+            imageUrl = uploadedUrl;
+        }
+    }
+    
     const data = {
         vyrobce: document.getElementById('editVyrobce').value,
         barva: document.getElementById('editBarva').value,
         material: document.getElementById('editMaterial').value,
         kg: parseFloat(document.getElementById('editKg').value),
+        cena_kg: parseFloat(document.getElementById('editCenaKg').value) || 0,
         zaklad: parseFloat(document.getElementById('editZaklad').value),
         aktualni: parseFloat(document.getElementById('editAktualni').value),
-        obrazek: document.getElementById('editObrazek').value || null
+        obrazek: imageUrl
     };
 
     try {
@@ -406,6 +475,46 @@ document.getElementById('editFilamentForm')?.addEventListener('submit', async (e
         console.error(error);
     }
 });
+
+async function deleteFilamentFromEdit() {
+    const id = document.getElementById('editId').value;
+    if (!id) return;
+    
+    closeEditModal();
+    
+    if (!confirm('🗑️ Opravdu smazat tento filament?')) return;
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('❌ Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('❌ Chyba při mazání:', response.status, errorData);
+            alert(`❌ Chyba: ${response.status}`);
+            return;
+        }
+        
+        alert('✅ Filament smazán!');
+        loadFilaments();
+        
+    } catch (error) {
+        console.error('❌ Chyba:', error);
+        alert('❌ Chyba: ' + error.message);
+    }
+}
 
 async function deleteFilament(id) {
     if (!confirm('🗑️ Opravdu smazat tento filament?')) return;

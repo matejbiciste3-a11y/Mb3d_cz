@@ -84,6 +84,9 @@
                                 <input type="number" id="kg" placeholder="Kg" step="0.1" required>
                             </div>
                             <div class="form-group">
+                                <input type="number" id="cena_kg" placeholder="Cena za kg (Kč)" step="1" required>
+                            </div>
+                            <div class="form-group">
                                 <input type="number" id="zaklad" placeholder="Základ (metry)" required>
                             </div>
                             <div class="form-group">
@@ -92,7 +95,10 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group" style="flex: 2;">
-                                <input type="text" id="obrazek" placeholder="URL obrázku">
+                                <input type="file" id="imageFile" accept="image/*" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <input type="text" id="obrazek" placeholder="Nebo URL obrázku">
                             </div>
                         </div>
                         <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Přidat filament</button>
@@ -139,17 +145,27 @@
                 <div class="form-group">
                     <input type="text" id="editMaterial" placeholder="Materiál" required>
                 </div>
-                <div class="form-group">
-                    <input type="number" id="editKg" placeholder="Kg" step="0.1" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="number" id="editKg" placeholder="Kg" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="editCenaKg" placeholder="Cena za kg (Kč)" step="1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="number" id="editZaklad" placeholder="Základ (metry)" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="editAktualni" placeholder="Aktuální (metry)" required>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <input type="number" id="editZaklad" placeholder="Základ (metry)" required>
+                    <input type="file" id="editImageFile" accept="image/*" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
                 </div>
                 <div class="form-group">
-                    <input type="number" id="editAktualni" placeholder="Aktuální (metry)" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="editObrazek" placeholder="URL obrázku">
+                    <input type="text" id="editObrazek" placeholder="Nebo URL obrázku">
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button type="submit" class="btn-primary" style="flex: 1;"><i class="fas fa-save"></i> Uložit</button>
@@ -159,8 +175,8 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
 </html>
