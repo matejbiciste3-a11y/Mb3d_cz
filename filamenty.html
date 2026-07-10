@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mb3D_CZ | Filamenty</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div id="authGuard">
+        <i class="fas fa-lock"></i>
+        <h1>Přístup zamítnut</h1>
+        <p>Pro přístup k této stránce se musíš <a href="login.html">přihlásit</a>.</p>
+    </div>
+
+    <div id="protectedContent">
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
+                <span>Mb3D_CZ</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Domů</a></li>
+                <li><a href="filamenty.html" class="active">Filamenty</a></li>
+                <li><a href="cenik.html">Ceník</a></li>
+                <li><a href="stl.html">STL soubory</a></li>
+                <li><a href="naklady.html">Náklady</a></li>
+                <li><a href="login.html">Přihlášení</a></li>
+                <li><input type="text" placeholder="Hledat..."></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+
+        <div class="container">
+            <h1><i class="fas fa-box"></i> Správa filamentů</h1>
+            
+            <div class="filters">
+                <select id="filterMaterial">
+                    <option value="">Všechny materiály</option>
+                    <option value="PLA">PLA</option>
+                    <option value="PETG">PETG</option>
+                    <option value="ABS">ABS</option>
+                    <option value="ASA">ASA</option>
+                    <option value="TPU">TPU</option>
+                    <option value="Nylon">Nylon</option>
+                </select>
+                <select id="filterColor">
+                    <option value="">Všechny barvy</option>
+                    <option value="Černá">Černá</option>
+                    <option value="Bílá">Bílá</option>
+                    <option value="Červená">Červená</option>
+                    <option value="Modrá">Modrá</option>
+                    <option value="Zelená">Zelená</option>
+                    <option value="Žlutá">Žlutá</option>
+                    <option value="Oranžová">Oranžová</option>
+                </select>
+                <button onclick="filterFilaments()"><i class="fas fa-search"></i> Filtrovat</button>
+                <button onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button>
+            </div>
+
+            <div class="filament-grid" id="filamentGrid"></div>
+
+            <div id="addFormContainer">
+                <div class="form-card">
+                    <h2><i class="fas fa-plus-circle"></i> Přidat filament</h2>
+                    <form id="addFilamentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="vyrobce" placeholder="Výrobce" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="barva" placeholder="Barva" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="material" placeholder="Materiál" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="number" id="kg" placeholder="Kg" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="zaklad" placeholder="Základ (metry)" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="aktualni" placeholder="Aktuální (metry)" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 2;">
+                                <input type="text" id="obrazek" placeholder="URL obrázku">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Přidat filament</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2><i class="fas fa-calculator"></i> Kalkulačka spotřeby</h2>
+                <div class="kalkulacka">
+                    <div class="form-group">
+                        <label>Vyber filament</label>
+                        <select id="filamentSelect">
+                            <option value="">-- Vyber filament --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Metry z PrusaSliceru</label>
+                        <input type="number" id="spotreba" placeholder="Zadej metry...">
+                    </div>
+                    <button onclick="odecistFilament()" class="btn-warning"><i class="fas fa-minus-circle"></i> Odečíst</button>
+                    <div id="vysledek" class="result-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Mb3D_CZ &bull; Všechna práva vyhrazena</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

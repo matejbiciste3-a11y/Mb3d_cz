@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mb3D_CZ | 3D tisk</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
+            <span>Mb3D_CZ</span>
+        </a>
+        <ul>
+            <li><a href="index.html" class="active">Domů</a></li>
+            <li><a href="filamenty.html">Filamenty</a></li>
+            <li><a href="cenik.html">Ceník</a></li>
+            <li><a href="stl.html">STL soubory</a></li>
+            <li><a href="naklady.html">Náklady</a></li>
+            <li><a href="login.html">Přihlášení</a></li>
+            <li><input type="text" placeholder="Hledat..."></li>
+        </ul>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <header>
+        <div class="glow-orb"></div>
+        <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="main-logo" onerror="this.style.display='none'">
+        <h1>Mb3D_CZ</h1>
+        <p class="tagline">3D tisk s vášní &bull; 2026</p>
+        <div class="social">
+            <a href="https://instagram.com" target="_blank" class="social-btn instagram">
+                <i class="fab fa-instagram"></i> Instagram
+            </a>
+            <a href="https://tiktok.com" target="_blank" class="social-btn tiktok">
+                <i class="fab fa-tiktok"></i> TikTok
+            </a>
+            <a href="https://printables.com" target="_blank" class="social-btn printables">
+                <i class="fas fa-print"></i> Printables
+            </a>
+        </div>
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalFilaments">0</span>
+                <span class="stat-label">Celkem filamentů</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalMeters">0</span>
+                <span class="stat-label">Celkem metrů</span>
+            </div>
+        </div>
+    </header>
+
+    <footer>
+        <p>&copy; 2026 Mb3D_CZ &bull; Všechna práva vyhrazena</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

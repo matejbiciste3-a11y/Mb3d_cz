@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mb3D_CZ | STL soubory</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div id="authGuard">
+        <i class="fas fa-lock"></i>
+        <h1>Přístup zamítnut</h1>
+        <p>Tato stránka je přístupná pouze pro administrátora.</p>
+        <p><a href="login.html">Přihlas se</a> jako admin.</p>
+    </div>
+
+    <div id="protectedContent">
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
+                <span>Mb3D_CZ</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Domů</a></li>
+                <li><a href="filamenty.html">Filamenty</a></li>
+                <li><a href="cenik.html">Ceník</a></li>
+                <li><a href="stl.html" class="active">STL soubory</a></li>
+                <li><a href="naklady.html">Náklady</a></li>
+                <li><a href="login.html">Přihlášení</a></li>
+                <li><input type="text" placeholder="Hledat..."></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+
+        <div class="container">
+            <h1><i class="fas fa-print"></i> STL soubory ke stažení</h1>
+            
+            <div class="stl-grid">
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-cube"></i></div>
+                    <h3>Testovací kostka</h3>
+                    <p>Kalibrační kostka 20x20x20mm pro testování tisku</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+                
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-ship"></i></div>
+                    <h3>Benchy loďka</h3>
+                    <p>Klasický testovací model pro ověření kvality</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+                
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-tools"></i></div>
+                    <h3>Držák na filament</h3>
+                    <p>Univerzální držák na cívku pro všechny tiskárny</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+                
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-industry"></i></div>
+                    <h3>Nástavce na trysky</h3>
+                    <p>Sada nástavců 0.4mm, 0.6mm, 0.8mm, 1.0mm</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-home"></i></div>
+                    <h3>Stojánek na telefon</h3>
+                    <p>Jednoduchý a funkční stojánek na mobil</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-mouse"></i></div>
+                    <h3>Organizér na kabely</h3>
+                    <p>Praktický organizér pro USB kabely</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-tree"></i></div>
+                    <h3>Vánoční ozdoby</h3>
+                    <p>Sada 5 vánočních ozdob pro tisk</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+
+                <div class="stl-card">
+                    <div class="stl-icon"><i class="fas fa-key"></i></div>
+                    <h3>Klíčenky</h3>
+                    <p>Sada 10 různých motivů klíčenek</p>
+                    <a href="#" class="btn-primary"><i class="fas fa-download"></i> Stáhnout</a>
+                </div>
+            </div>
+
+            <div class="note-box">
+                <h3><i class="fas fa-file-upload"></i> Chceš přidat vlastní STL?</h3>
+                <p style="color: var(--text-secondary); margin-top: 10px;">
+                    Pošli soubor na <strong style="color: var(--primary);">stl@mb3d.cz</strong> a my ho přidáme do knihovny.
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Mb3D_CZ &bull; Všechna práva vyhrazena</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
