@@ -77,26 +77,6 @@ nav {
     text-decoration: none;
 }
 
-.logo-img {
-    height: 40px;
-    width: auto;
-    filter: drop-shadow(0 0 20px rgba(255,107,0,0.3));
-    transition: var(--transition);
-}
-
-.logo-img:hover {
-    transform: scale(1.05) rotate(-3deg);
-}
-
-.logo span {
-    font-size: 24px;
-    font-weight: 800;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 2px;
-}
-
 .logo-text {
     font-size: 28px;
     font-weight: 900;
@@ -199,34 +179,6 @@ header {
     0%, 100% { transform: translate(0, 0) scale(1); }
     33% { transform: translate(120px, -60px) scale(1.2); }
     66% { transform: translate(-120px, 60px) scale(0.8); }
-}
-
-.main-logo {
-    max-width: 200px;
-    height: auto;
-    margin-bottom: 20px;
-    animation: floatLogo 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 40px rgba(255,107,0,0.3));
-    position: relative;
-    z-index: 1;
-}
-
-@keyframes floatLogo {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-20px) scale(1.02); }
-}
-
-header h1 {
-    font-size: 72px;
-    font-weight: 900;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 12px;
-    margin: 10px 0;
-    position: relative;
-    z-index: 1;
-    animation: fadeInUp 1s ease;
 }
 
 .main-title {
@@ -353,10 +305,6 @@ header h1 {
     padding: 0 24px;
 }
 
-h1, h2, h3 {
-    letter-spacing: 1px;
-}
-
 h1 {
     font-size: 32px;
     font-weight: 800;
@@ -449,37 +397,14 @@ h2 i {
     overflow: hidden;
 }
 
-.filament-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
+.filament-image img,
 .model-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.filament-image .edit-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(255,107,0,0.85);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    backdrop-filter: blur(10px);
-}
-
+.filament-image .edit-btn,
 .model-image .edit-btn {
     position: absolute;
     top: 8px;
@@ -1255,10 +1180,6 @@ footer {
         font-size: 18px;
     }
     
-    .main-logo {
-        max-width: 140px;
-    }
-    
     .social-btn {
         padding: 10px 20px;
         font-size: 13px;
@@ -1334,12 +1255,8 @@ footer {
         letter-spacing: 4px;
     }
     
-    .logo span {
+    .logo-text {
         font-size: 18px;
-    }
-    
-    .logo-img {
-        height: 30px;
     }
     
     .stl-grid {
