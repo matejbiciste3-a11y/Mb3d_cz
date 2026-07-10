@@ -1,6 +1,3 @@
-// POUŽIJEME supabaseClient z config.js
-const supabase = supabaseClient;
-
 if (typeof supabase === 'undefined' || !supabase.auth) {
     console.error('❌ Supabase není inicializován!');
 } else {
