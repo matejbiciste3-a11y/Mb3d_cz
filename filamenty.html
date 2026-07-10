@@ -17,8 +17,7 @@
     <div id="protectedContent">
         <nav>
             <a href="index.html" class="logo">
-                <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
-                <span>Mb3D_CZ</span>
+                <span class="logo-text">Mb3D_CZ</span>
             </a>
             <ul>
                 <li><a href="index.html">Domů</a></li>
@@ -125,8 +124,43 @@
         </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- MODÁLNÍ OKNO PRO EDITACI -->
+    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(10px);">
+        <div style="background: var(--bg-secondary); padding: 35px; border-radius: var(--radius); max-width: 500px; width: 90%; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-glow-strong);">
+            <h2 style="margin-top: 0; color: var(--primary);"><i class="fas fa-edit"></i> Upravit filament</h2>
+            <form id="editFilamentForm">
+                <input type="hidden" id="editId">
+                <div class="form-group">
+                    <input type="text" id="editVyrobce" placeholder="Výrobce" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editBarva" placeholder="Barva" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editMaterial" placeholder="Materiál" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="editKg" placeholder="Kg" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="editZaklad" placeholder="Základ (metry)" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="editAktualni" placeholder="Aktuální (metry)" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editObrazek" placeholder="URL obrázku">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="submit" class="btn-primary" style="flex: 1;"><i class="fas fa-save"></i> Uložit</button>
+                    <button type="button" onclick="closeEditModal()" class="btn-warning" style="flex: 1;"><i class="fas fa-times"></i> Zrušit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
 </html>

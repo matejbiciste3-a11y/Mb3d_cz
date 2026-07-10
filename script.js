@@ -1,3 +1,5 @@
+const supabase = window.supabase;
+
 if (typeof supabase === 'undefined') {
     console.error('❌ Supabase není inicializován!');
 } else if (!supabase.auth) {
@@ -209,6 +211,12 @@ async function loadFilaments() {
                 const spotreba = f.zaklad > 0 ? Math.round((1 - f.aktualni / f.zaklad) * 100) : 0;
                 const progressColor = spotreba > 80 ? '#ff4444' : spotreba > 50 ? '#ffaa00' : '#00cc66';
                 
+                const editButton = isAdmin() ? 
+                    `<button onclick="openEditModal(${f.id})" class="edit-btn" title="Upravit filament">
+                        <i class="fas fa-pen"></i>
+                    </button>` : 
+                    '';
+                
                 const deleteButton = isAdmin() ? 
                     `<button onclick="deleteFilament(${f.id})" class="delete-btn" title="Smazat filament">
                         <i class="fas fa-trash"></i>
@@ -221,7 +229,10 @@ async function loadFilaments() {
                             <img src="${f.obrazek || 'https://placehold.co/150x150/333333/FFFFFF?text=3D'}" 
                                  alt="${f.vyrobce} ${f.barva}" 
                                  onerror="this.src='https://placehold.co/150x150/333333/FFFFFF?text=3D'">
-                            ${deleteButton}
+                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
+                                ${editButton}
+                                ${deleteButton}
+                            </div>
                         </div>
                         <div class="filament-info">
                             <h3>${f.vyrobce}</h3>
@@ -308,6 +319,133 @@ document.getElementById('addFilamentForm')?.addEventListener('submit', async (e)
     }
 });
 
+async function openEditModal(id) {
+    console.log('📝 Otevírám editaci pro ID:', id);
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('❌ Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        const filament = data[0];
+        
+        if (!filament) {
+            alert('❌ Filament nenalezen!');
+            return;
+        }
+        
+        document.getElementById('editId').value = filament.id;
+        document.getElementById('editVyrobce').value = filament.vyrobce;
+        document.getElementById('editBarva').value = filament.barva;
+        document.getElementById('editMaterial').value = filament.material;
+        document.getElementById('editKg').value = filament.kg;
+        document.getElementById('editZaklad').value = filament.zaklad;
+        document.getElementById('editAktualni').value = filament.aktualni;
+        document.getElementById('editObrazek').value = filament.obrazek || '';
+        
+        document.getElementById('editModal').style.display = 'flex';
+        
+    } catch (error) {
+        console.error('❌ Chyba při načítání filamentu:', error);
+        alert('❌ Chyba: ' + error.message);
+    }
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+document.getElementById('editFilamentForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const id = document.getElementById('editId').value;
+    const token = await getAccessToken();
+    if (!token) {
+        alert('❌ Nejsi přihlášen!');
+        return;
+    }
+    
+    const data = {
+        vyrobce: document.getElementById('editVyrobce').value,
+        barva: document.getElementById('editBarva').value,
+        material: document.getElementById('editMaterial').value,
+        kg: parseFloat(document.getElementById('editKg').value),
+        zaklad: parseFloat(document.getElementById('editZaklad').value),
+        aktualni: parseFloat(document.getElementById('editAktualni').value),
+        obrazek: document.getElementById('editObrazek').value || null
+    };
+
+    try {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('❌ Chyba:', response.status, errorData);
+            alert(`❌ Chyba: ${response.status}`);
+            return;
+        }
+        
+        alert('✅ Filament upraven!');
+        closeEditModal();
+        loadFilaments();
+    } catch (error) {
+        alert('❌ Chyba: ' + error.message);
+        console.error(error);
+    }
+});
+
+async function deleteFilament(id) {
+    if (!confirm('🗑️ Opravdu smazat tento filament?')) return;
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('❌ Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('❌ Chyba při mazání:', response.status, errorData);
+            alert(`❌ Chyba: ${response.status}`);
+            return;
+        }
+        
+        alert('✅ Filament smazán!');
+        loadFilaments();
+        
+    } catch (error) {
+        console.error('❌ Chyba:', error);
+        alert('❌ Chyba: ' + error.message);
+    }
+}
+
 async function odecistFilament() {
     const id = document.getElementById('filamentSelect').value;
     const metry = parseFloat(document.getElementById('spotreba').value);
@@ -348,44 +486,6 @@ async function odecistFilament() {
     } catch (error) {
         alert('❌ Chyba při odečítání');
         console.error(error);
-    }
-}
-
-async function deleteFilament(id) {
-    if (!confirm('🗑️ Opravdu smazat tento filament?')) return;
-    
-    try {
-        const token = await getAccessToken();
-        if (!token) {
-            alert('❌ Nejsi přihlášen!');
-            return;
-        }
-        
-        console.log('🗑️ Mažu filament ID:', id);
-        
-        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
-            method: 'DELETE',
-            headers: {
-                'apikey': CONFIG.SUPABASE_KEY,
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error('❌ Chyba při mazání:', response.status, errorData);
-            alert(`❌ Chyba: ${response.status}`);
-            return;
-        }
-        
-        console.log('✅ Filament smazán!');
-        alert('✅ Filament byl úspěšně smazán!');
-        loadFilaments();
-        
-    } catch (error) {
-        console.error('❌ Chyba:', error);
-        alert('❌ Chyba: ' + error.message);
     }
 }
 
@@ -430,6 +530,12 @@ function calculateCost() {
 
 document.querySelector('.hamburger')?.addEventListener('click', function() {
     document.querySelector('nav ul').classList.toggle('open');
+});
+
+document.getElementById('editModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditModal();
+    }
 });
 
 document.addEventListener('DOMContentLoaded', async function() {
