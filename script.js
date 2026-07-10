@@ -226,7 +226,7 @@ async function loadFilaments() {
         
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty`, { headers });
         const data = await response.json();
-        console.log('Načteno:', data.length);
+        console.log('Načteno filamentů:', data.length);
         
         const grid = document.getElementById('filamentGrid');
         if (grid) {
@@ -307,7 +307,7 @@ async function loadFilaments() {
             }
         }
     } catch (error) {
-        console.error('Chyba načítání:', error);
+        console.error('Chyba načítání filamentů:', error);
     }
 }
 
@@ -369,7 +369,7 @@ document.getElementById('addFilamentForm')?.addEventListener('submit', async (e)
 });
 
 async function openEditModal(id) {
-    console.log('Otevírám editaci pro ID:', id);
+    console.log('Otevírám editaci filamentu ID:', id);
     
     try {
         const token = await getAccessToken();
@@ -637,6 +637,251 @@ function calculateCost() {
     document.getElementById('costPerGram').textContent = costPerGram.toFixed(2) + ' Kč';
 }
 
+async function loadModels() {
+    try {
+        const token = await getAccessToken();
+        const headers = {
+            'apikey': CONFIG.SUPABASE_KEY,
+            'Content-Type': 'application/json'
+        };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/modely`, { headers });
+        const data = await response.json();
+        console.log('Modely načteno:', data.length);
+        
+        const grid = document.getElementById('modelsGrid');
+        if (grid) {
+            grid.innerHTML = '';
+            
+            if (data.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-box-open" style="font-size: 48px; color: var(--primary);"></i>
+                        <p style="margin-top: 15px;">Zatím žádné modely. Přidej první!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            data.forEach(m => {
+                const editButton = isAdmin() ? 
+                    `<button onclick="openEditModelModal(${m.id})" class="edit-btn" title="Upravit model">
+                        <i class="fas fa-pen"></i>
+                    </button>` : 
+                    '';
+                
+                grid.innerHTML += `
+                    <div class="model-card">
+                        <div class="model-image">
+                            <img src="${m.obrazek || 'https://placehold.co/300x200/333333/FFFFFF?text=Model'}" 
+                                 alt="${m.nazev}" 
+                                 onerror="this.src='https://placehold.co/300x200/333333/FFFFFF?text=Model'">
+                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
+                                ${editButton}
+                            </div>
+                        </div>
+                        <div class="model-info">
+                            <h3>${m.nazev}</h3>
+                            <p class="model-price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${m.cena} Kč</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    } catch (error) {
+        console.error('Chyba načítání modelů:', error);
+    }
+}
+
+document.getElementById('addModelForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const token = await getAccessToken();
+    if (!token) {
+        alert('Nejsi přihlášen!');
+        return;
+    }
+    
+    const imageFile = document.getElementById('modelImageFile').files[0];
+    let imageUrl = document.getElementById('modelObrazek').value || null;
+    
+    if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) {
+            imageUrl = uploadedUrl;
+        }
+    }
+    
+    const data = {
+        nazev: document.getElementById('modelNazev').value,
+        cena: parseFloat(document.getElementById('modelCena').value),
+        obrazek: imageUrl
+    };
+
+    try {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/modely`, {
+            method: 'POST',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba:', response.status, errorData);
+            alert('Chyba: ' + response.status);
+            return;
+        }
+        
+        alert('Model přidán!');
+        loadModels();
+        e.target.reset();
+    } catch (error) {
+        alert('Chyba: ' + error.message);
+        console.error(error);
+    }
+});
+
+async function openEditModelModal(id) {
+    console.log('Otevírám editaci modelu ID:', id);
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/modely?id=eq.${id}`, {
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        const model = data[0];
+        
+        if (!model) {
+            alert('Model nenalezen!');
+            return;
+        }
+        
+        document.getElementById('editModelId').value = model.id;
+        document.getElementById('editModelNazev').value = model.nazev;
+        document.getElementById('editModelCena').value = model.cena;
+        document.getElementById('editModelObrazek').value = model.obrazek || '';
+        document.getElementById('editModelImageFile').value = '';
+        
+        document.getElementById('editModal').style.display = 'flex';
+        
+    } catch (error) {
+        console.error('Chyba při načítání modelu:', error);
+        alert('Chyba: ' + error.message);
+    }
+}
+
+document.getElementById('editModelForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const id = document.getElementById('editModelId').value;
+    const token = await getAccessToken();
+    if (!token) {
+        alert('Nejsi přihlášen!');
+        return;
+    }
+    
+    const imageFile = document.getElementById('editModelImageFile').files[0];
+    let imageUrl = document.getElementById('editModelObrazek').value || null;
+    
+    if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (uploadedUrl) {
+            imageUrl = uploadedUrl;
+        }
+    }
+    
+    const data = {
+        nazev: document.getElementById('editModelNazev').value,
+        cena: parseFloat(document.getElementById('editModelCena').value),
+        obrazek: imageUrl
+    };
+
+    try {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/modely?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba:', response.status, errorData);
+            alert('Chyba: ' + response.status);
+            return;
+        }
+        
+        alert('Model upraven!');
+        closeEditModal();
+        loadModels();
+    } catch (error) {
+        alert('Chyba: ' + error.message);
+        console.error(error);
+    }
+});
+
+async function deleteModelFromEdit() {
+    const id = document.getElementById('editModelId').value;
+    if (!id) {
+        alert('Chyba: ID modelu nebylo nalezeno!');
+        return;
+    }
+    
+    closeEditModal();
+    
+    if (!confirm('Opravdu smazat tento model?')) {
+        return;
+    }
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/modely?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba při mazání:', response.status, errorData);
+            alert('Chyba: ' + response.status);
+            return;
+        }
+        
+        alert('Model smazán!');
+        loadModels();
+        
+    } catch (error) {
+        console.error('Chyba:', error);
+        alert('Chyba: ' + error.message);
+    }
+}
+
 document.querySelector('.hamburger')?.addEventListener('click', function() {
     document.querySelector('nav ul').classList.toggle('open');
 });
@@ -654,6 +899,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         await checkUser();
         if (document.getElementById('filamentGrid')) {
             loadFilaments();
+        }
+        if (document.getElementById('modelsGrid')) {
+            loadModels();
         }
     } else {
         console.error('Supabase není inicializován!');
