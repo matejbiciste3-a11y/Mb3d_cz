@@ -253,12 +253,6 @@ async function loadFilaments() {
                     </button>` : 
                     '';
                 
-                const deleteButton = isAdmin() ? 
-                    `<button onclick="deleteFilament(${f.id})" class="delete-btn" title="Smazat filament">
-                        <i class="fas fa-trash"></i>
-                    </button>` : 
-                    '';
-                
                 grid.innerHTML += `
                     <div class="filament-card">
                         <div class="filament-image">

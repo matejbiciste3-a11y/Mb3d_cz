@@ -50,13 +50,13 @@
                 </select>
                 <select id="filterColor">
                     <option value="">Všechny barvy</option>
-                    <option value="Černá">Černá</option>
-                    <option value="Bílá">Bílá</option>
-                    <option value="Červená">Červená</option>
-                    <option value="Modrá">Modrá</option>
-                    <option value="Zelená">Zelená</option>
-                    <option value="Žlutá">Žlutá</option>
-                    <option value="Oranžová">Oranžová</option>
+                    <option value="Black">Black</option>
+                    <option value="White">White</option>
+                    <option value="Red">Red</option>
+                    <option value="Blue">Blue</option>
+                    <option value="Green">Green</option>
+                    <option value="Yellow">Yellow</option>
+                    <option value="Orange">Orange</option>
                 </select>
                 <button onclick="filterFilaments()"><i class="fas fa-search"></i> Filtrovat</button>
                 <button onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button>
@@ -84,13 +84,13 @@
                                 <input type="number" id="kg" placeholder="Kg" step="0.1" required>
                             </div>
                             <div class="form-group">
-                                <input type="number" id="cena_kg" placeholder="Cena za kg (Kč)" step="1" required>
+                                <input type="number" id="cena_kg" placeholder="Cena za kg (Kč)" step="0.1" required>
                             </div>
                             <div class="form-group">
-                                <input type="number" id="zaklad" placeholder="Základ (metry)" required>
+                                <input type="number" id="zaklad" placeholder="Základ (metry)" step="0.1" required>
                             </div>
                             <div class="form-group">
-                                <input type="number" id="aktualni" placeholder="Aktuální (metry)" required>
+                                <input type="number" id="aktualni" placeholder="Aktuální (metry)" step="0.1" required>
                             </div>
                         </div>
                         <div class="form-row">
@@ -149,15 +149,15 @@
                         <input type="number" id="editKg" placeholder="Kg" step="0.1" required>
                     </div>
                     <div class="form-group">
-                        <input type="number" id="editCenaKg" placeholder="Cena za kg (Kč)" step="1" required>
+                        <input type="number" id="editCenaKg" placeholder="Cena za kg (Kč)" step="0.1" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <input type="number" id="editZaklad" placeholder="Základ (metry)" required>
+                        <input type="number" id="editZaklad" placeholder="Základ (metry)" step="0.1" required>
                     </div>
                     <div class="form-group">
-                        <input type="number" id="editAktualni" placeholder="Aktuální (metry)" required>
+                        <input type="number" id="editAktualni" placeholder="Aktuální (metry)" step="0.1" required>
                     </div>
                 </div>
                 <div class="form-group">
