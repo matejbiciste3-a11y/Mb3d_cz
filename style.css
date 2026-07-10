@@ -1275,3 +1275,24 @@ footer {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+table tr:hover {
+    background: var(--bg-card-hover);
+}
+
+table td .edit-btn {
+    background: rgba(255,107,0,0.85);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+table td .edit-btn:hover {
+    transform: scale(1.15);
+    background: var(--primary);
+    box-shadow: 0 0 20px rgba(255,107,0,0.4);
+}
