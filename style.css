@@ -389,7 +389,7 @@ h2 i {
 
 .model-image {
     position: relative;
-    height: 160px;
+    height: 140px;
     background: var(--bg-card);
     display: flex;
     align-items: center;

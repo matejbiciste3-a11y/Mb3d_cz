@@ -682,9 +682,9 @@ async function loadModels() {
                 grid.innerHTML += `
                     <div class="model-card">
                         <div class="model-image">
-                            <img src="${m.obrazek || 'https://placehold.co/200x160/333333/FFFFFF?text=Model'}" 
+                            <img src="${m.obrazek || 'https://placehold.co/300x200/333333/FFFFFF?text=Model'}" 
                                  alt="${m.nazev}" 
-                                 onerror="this.src='https://placehold.co/200x160/333333/FFFFFF?text=Model'">
+                                 onerror="this.src='https://placehold.co/300x200/333333/FFFFFF?text=Model'">
                             ${editButton}
                         </div>
                         <div class="model-info">
