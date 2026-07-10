@@ -256,20 +256,18 @@ async function loadFilaments() {
                 grid.innerHTML += `
                     <div class="filament-card">
                         <div class="filament-image">
-                            <img src="${f.obrazek || 'https://placehold.co/150x150/333333/FFFFFF?text=3D'}" 
+                            <img src="${f.obrazek || 'https://placehold.co/200x140/333333/FFFFFF?text=3D'}" 
                                  alt="${f.vyrobce} ${f.barva}" 
-                                 onerror="this.src='https://placehold.co/150x150/333333/FFFFFF?text=3D'">
-                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
-                                ${editButton}
-                            </div>
+                                 onerror="this.src='https://placehold.co/200x140/333333/FFFFFF?text=3D'">
+                            ${editButton}
                         </div>
                         <div class="filament-info">
                             <h3>${f.vyrobce}</h3>
                             <p class="color" style="color: ${f.barva}">${f.barva}</p>
                             <p class="material"><i class="fas fa-cog"></i> ${f.material}</p>
-                            <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 0;">
                                 <span class="weight"><i class="fas fa-weight"></i> ${f.kg} kg</span>
-                                <span class="price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${cena} Kč/kg</span>
+                                <span class="price"><i class="fas fa-crown"></i> ${cena} Kč/kg</span>
                             </div>
                             <div class="meter-info">
                                 <span>Základ: ${f.zaklad}m</span>
@@ -610,8 +608,18 @@ function searchGlobal() {
     
     const filter = input.value.toLowerCase();
     const cards = document.querySelectorAll('.filament-card');
+    const models = document.querySelectorAll('.model-card');
     
     cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(filter)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    models.forEach(card => {
         const text = card.textContent.toLowerCase();
         if (text.includes(filter)) {
             card.style.display = '';
@@ -674,12 +682,10 @@ async function loadModels() {
                 grid.innerHTML += `
                     <div class="model-card">
                         <div class="model-image">
-                            <img src="${m.obrazek || 'https://placehold.co/300x200/333333/FFFFFF?text=Model'}" 
+                            <img src="${m.obrazek || 'https://placehold.co/200x160/333333/FFFFFF?text=Model'}" 
                                  alt="${m.nazev}" 
-                                 onerror="this.src='https://placehold.co/300x200/333333/FFFFFF?text=Model'">
-                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
-                                ${editButton}
-                            </div>
+                                 onerror="this.src='https://placehold.co/200x160/333333/FFFFFF?text=Model'">
+                            ${editButton}
                         </div>
                         <div class="model-info">
                             <h3>${m.nazev}</h3>

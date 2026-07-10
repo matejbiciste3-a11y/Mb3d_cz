@@ -136,10 +136,6 @@ nav ul li a.active {
     background: rgba(255,107,0,0.15);
 }
 
-nav ul li a::after {
-    display: none;
-}
-
 nav ul li input {
     padding: 8px 16px;
     border-radius: 20px;
@@ -391,33 +387,16 @@ h2 i {
 
 .filament-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
     margin: 30px 0;
 }
 
-@media (max-width: 1200px) {
-    .filament-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-@media (max-width: 992px) {
-    .filament-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .filament-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    .filament-grid {
-        grid-template-columns: 1fr;
-    }
+.models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
 }
 
 .filament-card {
@@ -433,12 +412,36 @@ h2 i {
     transform: translateY(-5px);
     border-color: var(--primary);
     box-shadow: var(--shadow-glow);
-    background: var(--bg-card-hover);
+}
+
+.model-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+}
+
+.model-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-glow);
 }
 
 .filament-image {
     position: relative;
-    height: 120px;
+    height: 140px;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.model-image {
+    position: relative;
+    height: 160px;
     background: var(--bg-card);
     display: flex;
     align-items: center;
@@ -450,86 +453,139 @@ h2 i {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: var(--transition);
 }
 
-.filament-card:hover .filament-image img {
-    transform: scale(1.05);
+.model-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.filament-image .delete-btn {
+.filament-image .edit-btn {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: rgba(255,0,0,0.85);
+    background: rgba(255,107,0,0.85);
     color: #fff;
     border: none;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 13px;
     backdrop-filter: blur(10px);
 }
 
-.filament-image .delete-btn:hover {
+.model-image .edit-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,107,0,0.85);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    backdrop-filter: blur(10px);
+}
+
+.filament-image .edit-btn:hover,
+.model-image .edit-btn:hover {
     transform: scale(1.15);
-    background: #ff0000;
-    box-shadow: 0 0 20px rgba(255,0,0,0.4);
+    background: var(--primary);
+    box-shadow: 0 0 20px rgba(255,107,0,0.4);
 }
 
 .filament-info {
-    padding: 12px 14px 14px;
+    padding: 14px 16px 16px;
+}
+
+.model-info {
+    padding: 14px 16px 16px;
+    text-align: center;
 }
 
 .filament-info h3 {
     color: var(--text-primary);
     margin: 0 0 2px 0;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
+}
+
+.model-info h3 {
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
 }
 
 .filament-info .color {
     font-weight: 600;
     margin-bottom: 4px;
-    font-size: 13px;
+    font-size: 14px;
 }
 
-.filament-info .material,
-.filament-info .weight {
+.filament-info .material {
     color: var(--text-secondary);
-    font-size: 12px;
+    font-size: 13px;
     margin: 2px 0;
 }
 
-.filament-info .material i,
+.filament-info .material i {
+    color: var(--primary);
+    width: 18px;
+}
+
+.filament-info .weight {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin: 2px 0;
+}
+
 .filament-info .weight i {
     color: var(--primary);
-    width: 16px;
-    font-size: 12px;
+    width: 18px;
 }
 
 .filament-info .price {
     color: #ffd700;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 4px 0;
 }
 
 .filament-info .price i {
     color: #ffd700;
+    margin-right: 4px;
+}
+
+.model-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.model-price i {
+    margin-right: 6px;
 }
 
 .meter-info {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-secondary);
-    margin: 8px 0 6px 0;
-    padding: 6px 0;
+    margin: 10px 0 6px 0;
+    padding: 8px 0;
     border-top: 1px solid var(--border-color);
 }
 
@@ -539,44 +595,22 @@ h2 i {
 
 .progress-bar {
     width: 100%;
-    height: 5px;
+    height: 6px;
     background: var(--bg-card);
-    border-radius: 3px;
+    border-radius: 4px;
     overflow: hidden;
-    margin: 4px 0 6px 0;
+    margin: 4px 0 8px 0;
 }
 
 .progress-fill {
     height: 100%;
-    border-radius: 3px;
+    border-radius: 4px;
     transition: width 0.8s ease;
 }
 
 .spotreba {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-}
-
-.edit-btn {
-    background: rgba(255,107,0,0.85);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    backdrop-filter: blur(10px);
-}
-
-.edit-btn:hover {
-    transform: scale(1.15);
-    background: var(--primary);
-    box-shadow: 0 0 20px rgba(255,107,0,0.4);
 }
 
 .filters {
@@ -1315,67 +1349,11 @@ footer {
     .login-card {
         padding: 24px 16px;
     }
-}
-
-.models-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-    margin: 30px 0;
-}
-
-.model-card {
-    background: var(--bg-secondary);
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    transition: var(--transition);
-}
-
-.model-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary);
-    box-shadow: var(--shadow-glow);
-}
-
-.model-image {
-    position: relative;
-    height: 180px;
-    background: var(--bg-card);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.model-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.model-info {
-    padding: 14px 16px;
-    text-align: center;
-}
-
-.model-info h3 {
-    color: var(--text-primary);
-    font-size: 16px;
-    margin: 0 0 6px 0;
-}
-
-.model-price {
-    font-size: 18px;
-    font-weight: 700;
-    color: #ffd700;
-}
-
-.model-price i {
-    margin-right: 6px;
-}
-
-@media (max-width: 480px) {
+    
+    .filament-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
     .models-grid {
         grid-template-columns: 1fr 1fr;
     }
