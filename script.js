@@ -1,7 +1,8 @@
-if (typeof supabase === 'undefined') {
+// POUŽIJEME supabaseClient z config.js
+const supabase = supabaseClient;
+
+if (typeof supabase === 'undefined' || !supabase.auth) {
     console.error('❌ Supabase není inicializován!');
-} else if (!supabase.auth) {
-    console.error('❌ Supabase.auth neexistuje!');
 } else {
     console.log('✅ Supabase připraven s auth');
 }
@@ -539,7 +540,7 @@ document.getElementById('editModal')?.addEventListener('click', function(e) {
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Stránka načtena');
     
-    if (typeof window.supabase !== 'undefined' && window.supabase) {
+    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
         await checkUser();
         if (document.getElementById('filamentGrid')) {
             loadFilaments();
