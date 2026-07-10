@@ -1,36 +1,36 @@
+const supabase = window.supabase;
+
 if (typeof supabase === 'undefined') {
     console.error('❌ Supabase není inicializován!');
 } else if (!supabase.auth) {
-    console.error('❌ Supabase.auth neexistuje! Zkontroluj config.js');
+    console.error('❌ Supabase.auth neexistuje!');
 } else {
     console.log('✅ Supabase připraven s auth');
 }
 
 let currentUser = null;
 
+async function getAccessToken() {
+    const { data: sessionData } = await supabase.auth.getSession();
+    return sessionData?.session?.access_token;
+}
+
 async function checkUser() {
     try {
         const { data: { user }, error } = await supabase.auth.getUser();
         
         if (error) {
-            console.error('❌ Chyba při získávání uživatele:', error);
+            console.log('ℹ️ Nejsem přihlášen');
             return false;
         }
         
-        console.log('👤 Celý uživatel:', user);
-        console.log('📦 user_metadata:', user?.user_metadata);
-        console.log('📦 raw_user_meta_data:', user?.raw_user_meta_data);
-        
         if (user) {
             let role = 'user';
-            
             if (user.user_metadata?.role) {
                 role = user.user_metadata.role;
             } else if (user.raw_user_meta_data?.role) {
                 role = user.raw_user_meta_data.role;
             }
-            
-            console.log('✅ Role načtena:', role);
             
             currentUser = {
                 email: user.email,
@@ -38,14 +38,14 @@ async function checkUser() {
                 id: user.id
             };
             
+            console.log('✅ Role:', role);
             showUserInfo();
             updateNav();
             checkPageAccess();
-            
             return true;
         }
     } catch (e) {
-        console.log('❌ Chyba při checkUser:', e);
+        console.log('❌ Chyba:', e);
     }
     return false;
 }
@@ -86,25 +86,16 @@ document.getElementById('loginForm')?.addEventListener('submit', async function(
     }
     
     try {
-        console.log('🔑 Pokus o přihlášení:', email);
-        
-        if (!supabase.auth) {
-            throw new Error('Supabase.auth není dostupný!');
-        }
-        
         const { data, error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password
         });
         
         if (error) {
-            console.error('❌ Chyba přihlášení:', error);
             msg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${error.message}`;
             msg.style.color = '#ff4444';
             return;
         }
-        
-        console.log('✅ Přihlášení úspěšné:', data);
         
         let role = 'user';
         if (data.user.user_metadata?.role) {
@@ -119,29 +110,22 @@ document.getElementById('loginForm')?.addEventListener('submit', async function(
             id: data.user.id
         };
         
-        console.log('✅ Role nastavena:', role);
-        
-        msg.innerHTML = `<i class="fas fa-check-circle"></i> Přihlášení úspěšné! Role: ${role}`;
+        msg.innerHTML = `<i class="fas fa-check-circle"></i> Přihlášení úspěšné!`;
         msg.style.color = '#00cc66';
         
         setTimeout(() => {
             window.location.href = 'filamenty.html';
         }, 800);
     } catch (e) {
-        console.error('❌ Chyba:', e);
         msg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Chyba: ${e.message}`;
         msg.style.color = '#ff4444';
     }
 });
 
 async function logoutUser() {
-    try {
-        await supabase.auth.signOut();
-        currentUser = null;
-        location.reload();
-    } catch (e) {
-        console.error('❌ Chyba při odhlašování:', e);
-    }
+    await supabase.auth.signOut();
+    currentUser = null;
+    location.reload();
 }
 
 function getCurrentUser() {
@@ -161,18 +145,9 @@ function checkPageAccess() {
     const protectedContent = document.getElementById('protectedContent');
     const path = window.location.pathname;
     
-    console.log('🔐 Kontrola přístupu - cesta:', path);
-    console.log('👤 Aktuální uživatel:', currentUser);
-    console.log('🛡️ Je admin?', isAdmin());
-    console.log('🔓 Je přihlášen?', isAuthenticated());
-    
-    if (!authGuard || !protectedContent) {
-        console.log('⚠️ Stránka nemá authGuard nebo protectedContent');
-        return true;
-    }
+    if (!authGuard || !protectedContent) return true;
     
     if (path.includes('index.html') || path.includes('login.html') || path === '/' || path === '') {
-        console.log('✅ Veřejná stránka - přístup povolen');
         authGuard.style.display = 'none';
         protectedContent.style.display = 'block';
         return true;
@@ -180,12 +155,10 @@ function checkPageAccess() {
     
     if (path.includes('cenik.html') || path.includes('stl.html')) {
         if (!isAdmin()) {
-            console.log('❌ Přístup zamítnut - vyžaduje admina');
             authGuard.style.display = 'flex';
             protectedContent.style.display = 'none';
             return false;
         }
-        console.log('✅ Admin přístup povolen');
         authGuard.style.display = 'none';
         protectedContent.style.display = 'block';
         return true;
@@ -193,18 +166,15 @@ function checkPageAccess() {
     
     if (path.includes('filamenty.html') || path.includes('naklady.html')) {
         if (!isAuthenticated()) {
-            console.log('❌ Přístup zamítnut - vyžaduje přihlášení');
             authGuard.style.display = 'flex';
             protectedContent.style.display = 'none';
             return false;
         }
-        console.log('✅ Přihlášený uživatel - přístup povolen');
         authGuard.style.display = 'none';
         protectedContent.style.display = 'block';
         return true;
     }
     
-    console.log('✅ Neznámá stránka - přístup povolen');
     authGuard.style.display = 'none';
     protectedContent.style.display = 'block';
     return true;
@@ -212,15 +182,16 @@ function checkPageAccess() {
 
 async function loadFilaments() {
     try {
-        console.log('📦 Načítám filamenty...');
-        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty`, {
-            headers: {
-                'apikey': CONFIG.SUPABASE_KEY,
-                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-            }
-        });
+        const token = await getAccessToken();
+        const headers = {
+            'apikey': CONFIG.SUPABASE_KEY,
+            'Content-Type': 'application/json'
+        };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty`, { headers });
         const data = await response.json();
-        console.log('📦 Načteno filamentů:', data.length);
+        console.log('📦 Načteno:', data.length);
         
         const grid = document.getElementById('filamentGrid');
         if (grid) {
@@ -238,16 +209,20 @@ async function loadFilaments() {
             
             data.forEach(f => {
                 const spotreba = f.zaklad > 0 ? Math.round((1 - f.aktualni / f.zaklad) * 100) : 0;
-                const deleteButton = isAdmin() ? 
-                    `<button onclick="deleteFilament(${f.id})" class="delete-btn"><i class="fas fa-trash"></i></button>` : 
-                    '';
-                
                 const progressColor = spotreba > 80 ? '#ff4444' : spotreba > 50 ? '#ffaa00' : '#00cc66';
+                
+                const deleteButton = isAdmin() ? 
+                    `<button onclick="deleteFilament(${f.id})" class="delete-btn" title="Smazat filament">
+                        <i class="fas fa-trash"></i>
+                    </button>` : 
+                    '';
                 
                 grid.innerHTML += `
                     <div class="filament-card">
                         <div class="filament-image">
-                            <img src="${f.obrazek || 'https://placehold.co/150x150/333333/FFFFFF?text=3D'}" alt="${f.vyrobce} ${f.barva}" onerror="this.src='https://placehold.co/150x150/333333/FFFFFF?text=3D'">
+                            <img src="${f.obrazek || 'https://placehold.co/150x150/333333/FFFFFF?text=3D'}" 
+                                 alt="${f.vyrobce} ${f.barva}" 
+                                 onerror="this.src='https://placehold.co/150x150/333333/FFFFFF?text=3D'">
                             ${deleteButton}
                         </div>
                         <div class="filament-info">
@@ -285,12 +260,18 @@ async function loadFilaments() {
             }
         }
     } catch (error) {
-        console.error('❌ Chyba načítání filamentů:', error);
+        console.error('❌ Chyba načítání:', error);
     }
 }
 
 document.getElementById('addFilamentForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    const token = await getAccessToken();
+    if (!token) {
+        alert('❌ Nejsi přihlášen!');
+        return;
+    }
     
     const data = {
         vyrobce: document.getElementById('vyrobce').value,
@@ -303,20 +284,28 @@ document.getElementById('addFilamentForm')?.addEventListener('submit', async (e)
     };
 
     try {
-        await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty`, {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty`, {
             method: 'POST',
             headers: {
                 'apikey': CONFIG.SUPABASE_KEY,
-                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('❌ Chyba:', response.status, errorData);
+            alert(`❌ Chyba: ${response.status}`);
+            return;
+        }
+        
         alert('✅ Filament přidán!');
         loadFilaments();
         e.target.reset();
     } catch (error) {
-        alert('❌ Chyba při přidávání');
+        alert('❌ Chyba: ' + error.message);
         console.error(error);
     }
 });
@@ -331,10 +320,16 @@ async function odecistFilament() {
     }
 
     try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('❌ Nejsi přihlášen!');
+            return;
+        }
+        
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
             headers: {
                 'apikey': CONFIG.SUPABASE_KEY,
-                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                'Authorization': `Bearer ${token}`
             }
         });
         const data = await response.json();
@@ -344,7 +339,7 @@ async function odecistFilament() {
             method: 'PATCH',
             headers: {
                 'apikey': CONFIG.SUPABASE_KEY,
-                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ aktualni: aktualni })
@@ -359,20 +354,40 @@ async function odecistFilament() {
 }
 
 async function deleteFilament(id) {
-    if (!confirm('Opravdu smazat tento filament?')) return;
+    if (!confirm('🗑️ Opravdu smazat tento filament?')) return;
     
     try {
-        await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('❌ Nejsi přihlášen!');
+            return;
+        }
+        
+        console.log('🗑️ Mažu filament ID:', id);
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
             method: 'DELETE',
             headers: {
                 'apikey': CONFIG.SUPABASE_KEY,
-                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('❌ Chyba při mazání:', response.status, errorData);
+            alert(`❌ Chyba: ${response.status}`);
+            return;
+        }
+        
+        console.log('✅ Filament smazán!');
+        alert('✅ Filament byl úspěšně smazán!');
         loadFilaments();
+        
     } catch (error) {
-        alert('❌ Chyba při mazání');
-        console.error(error);
+        console.error('❌ Chyba:', error);
+        alert('❌ Chyba: ' + error.message);
     }
 }
 
@@ -420,17 +435,14 @@ document.querySelector('.hamburger')?.addEventListener('click', function() {
 });
 
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Stránka načtena, inicializace...');
+    console.log('🚀 Stránka načtena');
     
     if (typeof window.supabase !== 'undefined' && window.supabase) {
-        console.log('✅ Supabase připraven, načítám uživatele...');
         await checkUser();
-        
         if (document.getElementById('filamentGrid')) {
-            console.log('📦 Načítám filamenty...');
             loadFilaments();
         }
     } else {
-        console.error('❌ Supabase není inicializován! Zkontroluj config.js a pořadí skriptů.');
+        console.error('❌ Supabase není inicializován!');
     }
 });
