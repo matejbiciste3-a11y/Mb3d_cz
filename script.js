@@ -261,7 +261,6 @@ async function loadFilaments() {
                                  onerror="this.src='https://placehold.co/150x150/333333/FFFFFF?text=3D'">
                             <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 5px;">
                                 ${editButton}
-                                ${deleteButton}
                             </div>
                         </div>
                         <div class="filament-info">
@@ -508,41 +507,6 @@ async function deleteFromEdit() {
         
         console.log('✅ Filament smazán!');
         alert('✅ Filament byl úspěšně smazán!');
-        loadFilaments();
-        
-    } catch (error) {
-        console.error('❌ Chyba:', error);
-        alert('❌ Chyba: ' + error.message);
-    }
-}
-
-async function deleteFilament(id) {
-    if (!confirm('🗑️ Opravdu smazat tento filament?')) return;
-    
-    try {
-        const token = await getAccessToken();
-        if (!token) {
-            alert('❌ Nejsi přihlášen!');
-            return;
-        }
-        
-        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
-            method: 'DELETE',
-            headers: {
-                'apikey': CONFIG.SUPABASE_KEY,
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error('❌ Chyba při mazání:', response.status, errorData);
-            alert(`❌ Chyba: ${response.status}`);
-            return;
-        }
-        
-        alert('✅ Filament smazán!');
         loadFilaments();
         
     } catch (error) {
