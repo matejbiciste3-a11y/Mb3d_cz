@@ -10,8 +10,7 @@
 <body>
     <nav>
         <a href="index.html" class="logo">
-            <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
-            <span>Mb3D_CZ</span>
+            <span class="logo-text">Mb3D_CZ</span>
         </a>
         <ul>
             <li><a href="index.html" class="active">Domů</a></li>
@@ -20,7 +19,7 @@
             <li><a href="stl.html">STL soubory</a></li>
             <li><a href="naklady.html">Náklady</a></li>
             <li><a href="login.html">Přihlášení</a></li>
-            <li><input type="text" placeholder="Hledat..."></li>
+            <li><input type="text" id="searchGlobal" placeholder="Hledat..." onkeyup="searchGlobal()"></li>
         </ul>
         <div class="hamburger">
             <span></span>
@@ -31,8 +30,7 @@
 
     <header>
         <div class="glow-orb"></div>
-        <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="main-logo" onerror="this.style.display='none'">
-        <h1>Mb3D_CZ</h1>
+        <h1 class="main-title">Mb3D_CZ</h1>
         <p class="tagline">3D tisk s vášní &bull; 2026</p>
         <div class="social">
             <a href="https://instagram.com" target="_blank" class="social-btn instagram">
@@ -53,6 +51,10 @@
             <div class="stat-item">
                 <span class="stat-number" id="totalMeters">0</span>
                 <span class="stat-label">Celkem metrů</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalPrints">0</span>
+                <span class="stat-label">Vytištěno</span>
             </div>
         </div>
     </header>

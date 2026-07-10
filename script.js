@@ -1,7 +1,7 @@
 if (typeof supabase === 'undefined' || !supabase.auth) {
-    console.error('❌ Supabase není inicializován! Zkontroluj config.js a pořadí skriptů.');
+    console.error('Supabase není inicializován');
 } else {
-    console.log('✅ Supabase připraven s auth');
+    console.log('Supabase připraven s auth');
 }
 
 let currentUser = null;
@@ -17,7 +17,7 @@ async function uploadImage(file) {
     try {
         const token = await getAccessToken();
         if (!token) {
-            alert('❌ Nejsi přihlášen!');
+            alert('Nejsi přihlášen');
             return null;
         }
         
@@ -33,8 +33,8 @@ async function uploadImage(file) {
             });
         
         if (error) {
-            console.error('❌ Chyba nahrávání:', error);
-            alert('❌ Chyba nahrávání: ' + error.message);
+            console.error('Chyba nahrávání:', error);
+            alert('Chyba nahrávání: ' + error.message);
             return null;
         }
         
@@ -42,10 +42,10 @@ async function uploadImage(file) {
             .from('filament-images')
             .getPublicUrl(filePath);
         
-        console.log('✅ Obrázek nahrán:', urlData.publicUrl);
+        console.log('Obrázek nahrán:', urlData.publicUrl);
         return urlData.publicUrl;
     } catch (error) {
-        console.error('❌ Chyba:', error);
+        console.error('Chyba:', error);
         return null;
     }
 }
@@ -55,7 +55,7 @@ async function checkUser() {
         const { data: { user }, error } = await supabase.auth.getUser();
         
         if (error) {
-            console.log('ℹ️ Nejsem přihlášen');
+            console.log('Nejsem přihlášen');
             return false;
         }
         
@@ -73,14 +73,14 @@ async function checkUser() {
                 id: user.id
             };
             
-            console.log('✅ Role:', role);
+            console.log('Role:', role);
             showUserInfo();
             updateNav();
             checkPageAccess();
             return true;
         }
     } catch (e) {
-        console.log('❌ Chyba:', e);
+        console.log('Chyba:', e);
     }
     return false;
 }
@@ -226,7 +226,7 @@ async function loadFilaments() {
         
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty`, { headers });
         const data = await response.json();
-        console.log('📦 Načteno:', data.length);
+        console.log('Načteno:', data.length);
         
         const grid = document.getElementById('filamentGrid');
         if (grid) {
@@ -294,14 +294,20 @@ async function loadFilaments() {
 
             const totalFilaments = document.getElementById('totalFilaments');
             const totalMeters = document.getElementById('totalMeters');
+            const totalPrints = document.getElementById('totalPrints');
+            
             if (totalFilaments) totalFilaments.textContent = data.length;
             if (totalMeters) {
                 const sum = data.reduce((acc, f) => acc + f.aktualni, 0);
                 totalMeters.textContent = Math.round(sum);
             }
+            if (totalPrints) {
+                const sum = data.reduce((acc, f) => acc + (f.zaklad - f.aktualni), 0);
+                totalPrints.textContent = Math.round(sum);
+            }
         }
     } catch (error) {
-        console.error('❌ Chyba načítání:', error);
+        console.error('Chyba načítání:', error);
     }
 }
 
@@ -310,7 +316,7 @@ document.getElementById('addFilamentForm')?.addEventListener('submit', async (e)
     
     const token = await getAccessToken();
     if (!token) {
-        alert('❌ Nejsi přihlášen!');
+        alert('Nejsi přihlášen!');
         return;
     }
     
@@ -348,27 +354,27 @@ document.getElementById('addFilamentForm')?.addEventListener('submit', async (e)
         
         if (!response.ok) {
             const errorData = await response.text();
-            console.error('❌ Chyba:', response.status, errorData);
-            alert(`❌ Chyba: ${response.status}`);
+            console.error('Chyba:', response.status, errorData);
+            alert('Chyba: ' + response.status);
             return;
         }
         
-        alert('✅ Filament přidán!');
+        alert('Filament přidán!');
         loadFilaments();
         e.target.reset();
     } catch (error) {
-        alert('❌ Chyba: ' + error.message);
+        alert('Chyba: ' + error.message);
         console.error(error);
     }
 });
 
 async function openEditModal(id) {
-    console.log('📝 Otevírám editaci pro ID:', id);
+    console.log('Otevírám editaci pro ID:', id);
     
     try {
         const token = await getAccessToken();
         if (!token) {
-            alert('❌ Nejsi přihlášen!');
+            alert('Nejsi přihlášen!');
             return;
         }
         
@@ -382,7 +388,7 @@ async function openEditModal(id) {
         const filament = data[0];
         
         if (!filament) {
-            alert('❌ Filament nenalezen!');
+            alert('Filament nenalezen!');
             return;
         }
         
@@ -400,8 +406,8 @@ async function openEditModal(id) {
         document.getElementById('editModal').style.display = 'flex';
         
     } catch (error) {
-        console.error('❌ Chyba při načítání filamentu:', error);
-        alert('❌ Chyba: ' + error.message);
+        console.error('Chyba při načítání filamentu:', error);
+        alert('Chyba: ' + error.message);
     }
 }
 
@@ -415,7 +421,7 @@ document.getElementById('editFilamentForm')?.addEventListener('submit', async (e
     const id = document.getElementById('editId').value;
     const token = await getAccessToken();
     if (!token) {
-        alert('❌ Nejsi přihlášen!');
+        alert('Nejsi přihlášen!');
         return;
     }
     
@@ -453,16 +459,16 @@ document.getElementById('editFilamentForm')?.addEventListener('submit', async (e
         
         if (!response.ok) {
             const errorData = await response.text();
-            console.error('❌ Chyba:', response.status, errorData);
-            alert(`❌ Chyba: ${response.status}`);
+            console.error('Chyba:', response.status, errorData);
+            alert('Chyba: ' + response.status);
             return;
         }
         
-        alert('✅ Filament upraven!');
+        alert('Filament upraven!');
         closeEditModal();
         loadFilaments();
     } catch (error) {
-        alert('❌ Chyba: ' + error.message);
+        alert('Chyba: ' + error.message);
         console.error(error);
     }
 });
@@ -470,24 +476,24 @@ document.getElementById('editFilamentForm')?.addEventListener('submit', async (e
 async function deleteFromEdit() {
     const id = document.getElementById('editId').value;
     if (!id) {
-        alert('❌ Chyba: ID filamentu nebylo nalezeno!');
+        alert('Chyba: ID filamentu nebylo nalezeno!');
         return;
     }
     
     closeEditModal();
     
-    if (!confirm('🗑️ Opravdu smazat tento filament?')) {
+    if (!confirm('Opravdu smazat tento filament?')) {
         return;
     }
     
     try {
         const token = await getAccessToken();
         if (!token) {
-            alert('❌ Nejsi přihlášen!');
+            alert('Nejsi přihlášen!');
             return;
         }
         
-        console.log('🗑️ Mažu filament ID:', id);
+        console.log('Mažu filament ID:', id);
         
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty?id=eq.${id}`, {
             method: 'DELETE',
@@ -500,18 +506,18 @@ async function deleteFromEdit() {
         
         if (!response.ok) {
             const errorData = await response.text();
-            console.error('❌ Chyba při mazání:', response.status, errorData);
-            alert(`❌ Chyba: ${response.status} - ${errorData}`);
+            console.error('Chyba při mazání:', response.status, errorData);
+            alert('Chyba: ' + response.status);
             return;
         }
         
-        console.log('✅ Filament smazán!');
-        alert('✅ Filament byl úspěšně smazán!');
+        console.log('Filament smazán!');
+        alert('Filament byl úspěšně smazán!');
         loadFilaments();
         
     } catch (error) {
-        console.error('❌ Chyba:', error);
-        alert('❌ Chyba: ' + error.message);
+        console.error('Chyba:', error);
+        alert('Chyba: ' + error.message);
     }
 }
 
@@ -527,7 +533,7 @@ async function odecistFilament() {
     try {
         const token = await getAccessToken();
         if (!token) {
-            alert('❌ Nejsi přihlášen!');
+            alert('Nejsi přihlášen!');
             return;
         }
         
@@ -553,7 +559,7 @@ async function odecistFilament() {
         document.getElementById('vysledek').innerHTML = `<i class="fas fa-check-circle"></i> Odečteno ${metry}m. Zbývá ${aktualni}m`;
         loadFilaments();
     } catch (error) {
-        alert('❌ Chyba při odečítání');
+        alert('Chyba při odečítání');
         console.error(error);
     }
 }
@@ -578,6 +584,40 @@ function resetFilters() {
     document.getElementById('filterColor').value = '';
     document.querySelectorAll('.filament-card').forEach(card => {
         card.style.display = '';
+    });
+}
+
+function searchFilaments() {
+    const input = document.getElementById('searchFilament');
+    if (!input) return;
+    
+    const filter = input.value.toLowerCase();
+    const cards = document.querySelectorAll('.filament-card');
+    
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(filter)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function searchGlobal() {
+    const input = document.getElementById('searchGlobal');
+    if (!input) return;
+    
+    const filter = input.value.toLowerCase();
+    const cards = document.querySelectorAll('.filament-card');
+    
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(filter)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
     });
 }
 
@@ -608,7 +648,7 @@ document.getElementById('editModal')?.addEventListener('click', function(e) {
 });
 
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Stránka načtena');
+    console.log('Stránka načtena');
     
     if (typeof supabase !== 'undefined' && supabase && supabase.auth) {
         await checkUser();
@@ -616,6 +656,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             loadFilaments();
         }
     } else {
-        console.error('❌ Supabase není inicializován!');
+        console.error('Supabase není inicializován!');
     }
 });

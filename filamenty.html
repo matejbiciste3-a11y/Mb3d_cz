@@ -26,7 +26,7 @@
                 <li><a href="stl.html">STL soubory</a></li>
                 <li><a href="naklady.html">Náklady</a></li>
                 <li><a href="login.html">Přihlášení</a></li>
-                <li><input type="text" placeholder="Hledat..."></li>
+                <li><input type="text" id="searchFilament" placeholder="Hledat..." onkeyup="searchFilaments()"></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -117,7 +117,7 @@
                     </div>
                     <div class="form-group">
                         <label>Metry z PrusaSliceru</label>
-                        <input type="number" id="spotreba" placeholder="Zadej metry...">
+                        <input type="number" id="spotreba" placeholder="Zadej metry..." step="0.1">
                     </div>
                     <button onclick="odecistFilament()" class="btn-warning"><i class="fas fa-minus-circle"></i> Odečíst</button>
                     <div id="vysledek" class="result-box"></div>
