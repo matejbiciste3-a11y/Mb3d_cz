@@ -1,3 +1,5 @@
+const supabase = window.supabase;
+
 if (typeof supabase === 'undefined' || !supabase.auth) {
     console.error('Supabase není inicializován');
 } else {
@@ -1014,29 +1016,38 @@ document.getElementById('addStlForm')?.addEventListener('submit', async (e) => {
         return;
     }
     
-    const stlFile = document.getElementById('stlFile').files[0];
-    if (!stlFile) {
+    const stlFile = document.getElementById('stlFile');
+    if (!stlFile || !stlFile.files || stlFile.files.length === 0) {
         alert('Vyber STL soubor!');
         return;
     }
     
-    const stlUrl = await uploadStlFile(stlFile);
+    const stlUrl = await uploadStlFile(stlFile.files[0]);
     if (!stlUrl) return;
     
-    const imageFile = document.getElementById('stlImageFile').files[0];
-    let imageUrl = document.getElementById('stlObrazek').value || null;
+    const imageFile = document.getElementById('stlImageFile');
+    let imageUrl = document.getElementById('stlObrazek')?.value || null;
     
-    if (imageFile) {
-        const uploadedUrl = await uploadImage(imageFile);
+    if (imageFile && imageFile.files && imageFile.files.length > 0) {
+        const uploadedUrl = await uploadImage(imageFile.files[0]);
         if (uploadedUrl) {
             imageUrl = uploadedUrl;
         }
     }
     
+    const nazev = document.getElementById('stlNazev');
+    const cena = document.getElementById('stlCena');
+    const popis = document.getElementById('stlPopis');
+    
+    if (!nazev || !cena) {
+        alert('Chyba: Chybí povinné pole!');
+        return;
+    }
+    
     const data = {
-        nazev: document.getElementById('stlNazev').value,
-        popis: document.getElementById('stlPopis').value || null,
-        cena: parseFloat(document.getElementById('stlCena').value) || 0,
+        nazev: nazev.value,
+        popis: popis?.value || null,
+        cena: parseFloat(cena.value) || 0,
         obrazek: imageUrl,
         stl_url: stlUrl
     };
@@ -1119,29 +1130,38 @@ document.getElementById('editStlForm')?.addEventListener('submit', async (e) => 
     }
     
     let stlUrl = null;
-    const stlFile = document.getElementById('editStlFile').files[0];
+    const stlFile = document.getElementById('editStlFile');
     
-    if (stlFile) {
-        const uploadedUrl = await uploadStlFile(stlFile);
+    if (stlFile && stlFile.files && stlFile.files.length > 0) {
+        const uploadedUrl = await uploadStlFile(stlFile.files[0]);
         if (uploadedUrl) {
             stlUrl = uploadedUrl;
         }
     }
     
-    const imageFile = document.getElementById('editStlImageFile').files[0];
-    let imageUrl = document.getElementById('editStlObrazek').value || null;
+    const imageFile = document.getElementById('editStlImageFile');
+    let imageUrl = document.getElementById('editStlObrazek')?.value || null;
     
-    if (imageFile) {
-        const uploadedUrl = await uploadImage(imageFile);
+    if (imageFile && imageFile.files && imageFile.files.length > 0) {
+        const uploadedUrl = await uploadImage(imageFile.files[0]);
         if (uploadedUrl) {
             imageUrl = uploadedUrl;
         }
     }
     
+    const nazev = document.getElementById('editStlNazev');
+    const cena = document.getElementById('editStlCena');
+    const popis = document.getElementById('editStlPopis');
+    
+    if (!nazev || !cena) {
+        alert('Chyba: Chybí povinné pole!');
+        return;
+    }
+    
     const data = {
-        nazev: document.getElementById('editStlNazev').value,
-        popis: document.getElementById('editStlPopis').value || null,
-        cena: parseFloat(document.getElementById('editStlCena').value) || 0,
+        nazev: nazev.value,
+        popis: popis?.value || null,
+        cena: parseFloat(cena.value) || 0,
         obrazek: imageUrl
     };
     
