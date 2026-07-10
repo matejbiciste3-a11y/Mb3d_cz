@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mb3D_CZ | Ceník</title>
+    <title>Mb3D_CZ | Modely</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -18,8 +18,7 @@
     <div id="protectedContent">
         <nav>
             <a href="index.html" class="logo">
-                <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
-                <span>Mb3D_CZ</span>
+                <span class="logo-text">Mb3D_CZ</span>
             </a>
             <ul>
                 <li><a href="index.html">Domů</a></li>
@@ -28,7 +27,7 @@
                 <li><a href="stl.html">STL soubory</a></li>
                 <li><a href="naklady.html">Náklady</a></li>
                 <li><a href="login.html">Přihlášení</a></li>
-                <li><input type="text" placeholder="Hledat..."></li>
+                <li><input type="text" id="searchGlobal" placeholder="Hledat..." onkeyup="searchGlobal()"></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -38,74 +37,71 @@
         </nav>
 
         <div class="container">
-            <h1><i class="fas fa-tag"></i> Ceník služeb</h1>
+            <h1><i class="fas fa-tag"></i> Nabídka modelů</h1>
             
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <h3>Základní tisk</h3>
-                    <div class="price">5 Kč / g</div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> PLA materiál</li>
-                        <li><i class="fas fa-check"></i> Standardní kvalita</li>
-                        <li><i class="fas fa-check"></i> Do 5 hodin tisku</li>
-                        <li><i class="fas fa-check"></i> Základní post-processing</li>
-                    </ul>
-                    <button class="btn-primary"><i class="fas fa-shopping-cart"></i> Objednat</button>
-                </div>
-                
-                <div class="pricing-card featured">
-                    <div class="badge"><i class="fas fa-star"></i> Nejprodávanější</div>
-                    <h3>Kvalitní tisk</h3>
-                    <div class="price">8 Kč / g</div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> PETG / ABS materiál</li>
-                        <li><i class="fas fa-check"></i> Vysoká kvalita</li>
-                        <li><i class="fas fa-check"></i> Neomezený čas tisku</li>
-                        <li><i class="fas fa-check"></i> Post-processing zdarma</li>
-                        <li><i class="fas fa-check"></i> Konzultace zdarma</li>
-                    </ul>
-                    <button class="btn-primary"><i class="fas fa-shopping-cart"></i> Objednat</button>
-                </div>
-                
-                <div class="pricing-card">
-                    <h3>Profesionální tisk</h3>
-                    <div class="price">12 Kč / g</div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> Výběr materiálu</li>
-                        <li><i class="fas fa-check"></i> Prémiová kvalita</li>
-                        <li><i class="fas fa-check"></i> Neomezený čas tisku</li>
-                        <li><i class="fas fa-check"></i> Post-processing zdarma</li>
-                        <li><i class="fas fa-check"></i> Konzultace zdarma</li>
-                        <li><i class="fas fa-check"></i> Prioritní zpracování</li>
-                    </ul>
-                    <button class="btn-primary"><i class="fas fa-shopping-cart"></i> Objednat</button>
-                </div>
-            </div>
+            <div class="models-grid" id="modelsGrid"></div>
 
-            <div class="note-box">
-                <h3><i class="fas fa-info-circle"></i> Důležité informace</h3>
-                <ul>
-                    <li>Ceny jsou uvedeny včetně DPH</li>
-                    <li>Minimální objednávka: 10g</li>
-                    <li>Doprava: 100 Kč po ČR</li>
-                    <li>Možnost osobního odběru v Praze</li>
-                    <li>Akceptujeme platbu převodem i hotově</li>
-                </ul>
-            </div>
-
-            <div class="note-box" style="border-color: var(--primary);">
-                <h3><i class="fas fa-gift"></i> Speciální nabídka 2026</h3>
-                <ul>
-                    <li><strong>První tisk ZDARMA</strong> pro nové zákazníky</li>
-                    <li><strong>Množstevní sleva:</strong> nad 500g → 10% sleva</li>
-                    <li><strong>Věrnostní program:</strong> každý 5. tisk zdarma</li>
-                </ul>
+            <div id="addFormContainer">
+                <div class="form-card">
+                    <h2><i class="fas fa-plus-circle"></i> Přidat model</h2>
+                    <form id="addModelForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="modelNazev" placeholder="Název modelu" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="modelCena" placeholder="Cena (Kč)" step="1" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 2;">
+                                <input type="file" id="modelImageFile" accept="image/*" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <input type="text" id="modelObrazek" placeholder="Nebo URL obrázku">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Přidat model</button>
+                    </form>
+                </div>
             </div>
         </div>
 
         <footer>
             <p>&copy; 2026 Mb3D_CZ &bull; Všechna práva vyhrazena</p>
         </footer>
+    </div>
+
+    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(10px);">
+        <div style="background: var(--bg-secondary); padding: 35px; border-radius: var(--radius); max-width: 500px; width: 90%; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-glow-strong);">
+            <h2 style="margin-top: 0; color: var(--primary);"><i class="fas fa-edit"></i> Upravit model</h2>
+            <form id="editModelForm">
+                <input type="hidden" id="editModelId">
+                <div class="form-group">
+                    <input type="text" id="editModelNazev" placeholder="Název modelu" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="editModelCena" placeholder="Cena (Kč)" step="1" required>
+                </div>
+                <div class="form-group">
+                    <input type="file" id="editModelImageFile" accept="image/*" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="editModelObrazek" placeholder="Nebo URL obrázku">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                    <button type="submit" class="btn-primary" style="flex: 1; min-width: 100px;">
+                        <i class="fas fa-save"></i> Uložit
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="btn-warning" style="flex: 1; min-width: 100px;">
+                        <i class="fas fa-times"></i> Zrušit
+                    </button>
+                    <button type="button" onclick="deleteModelFromEdit()" class="btn-danger" style="flex: 1; min-width: 100px;">
+                        <i class="fas fa-trash"></i> Smazat
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
