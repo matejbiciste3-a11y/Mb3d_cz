@@ -335,15 +335,15 @@ h2 i {
 
 .filament-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
     margin: 30px 0;
 }
 
 .models-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
     margin: 30px 0;
 }
 
@@ -391,7 +391,7 @@ h2 i {
 
 .model-image {
     position: relative;
-    height: 160px;
+    height: 140px;
     background: var(--bg-card);
     display: flex;
     align-items: center;
@@ -445,8 +445,7 @@ h2 i {
 }
 
 .model-info {
-    padding: 14px 16px 16px;
-    text-align: center;
+    padding: 12px 14px 14px;
 }
 
 .filament-info h3 {
@@ -458,9 +457,9 @@ h2 i {
 
 .model-info h3 {
     color: var(--text-primary);
-    font-size: 18px;
+    margin: 0 0 2px 0;
+    font-size: 15px;
     font-weight: 700;
-    margin: 0 0 6px 0;
 }
 
 .filament-info .color {
@@ -505,13 +504,15 @@ h2 i {
 }
 
 .model-price {
-    font-size: 22px;
-    font-weight: 700;
     color: #ffd700;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 4px;
 }
 
 .model-price i {
-    margin-right: 6px;
+    color: #ffd700;
+    margin-right: 3px;
 }
 
 .meter-info {
@@ -1139,6 +1140,24 @@ footer {
     }
 }
 
+@media (max-width: 1200px) {
+    .filament-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .models-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .filament-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .models-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     nav {
         padding: 12px 20px;
@@ -1261,7 +1280,6 @@ footer {
     .filament-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-
     .models-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1288,7 +1306,6 @@ footer {
     .filament-grid {
         grid-template-columns: 1fr;
     }
-
     .models-grid {
         grid-template-columns: 1fr;
     }
