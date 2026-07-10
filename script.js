@@ -271,6 +271,9 @@ async function loadFilaments() {
     }
 }
 
+// ============================================
+// 🟢 PŘIDÁVÁNÍ FILAMENTU
+// ============================================
 document.getElementById('addFilamentForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -317,6 +320,9 @@ document.getElementById('addFilamentForm')?.addEventListener('submit', async (e)
     }
 });
 
+// ============================================
+// 📝 EDITACE FILAMENTU
+// ============================================
 async function openEditModal(id) {
     console.log('📝 Otevírám editaci pro ID:', id);
     
@@ -341,6 +347,7 @@ async function openEditModal(id) {
             return;
         }
         
+        // Naplnění formuláře
         document.getElementById('editId').value = filament.id;
         document.getElementById('editVyrobce').value = filament.vyrobce;
         document.getElementById('editBarva').value = filament.barva;
@@ -350,6 +357,7 @@ async function openEditModal(id) {
         document.getElementById('editAktualni').value = filament.aktualni;
         document.getElementById('editObrazek').value = filament.obrazek || '';
         
+        // Zobrazení modálního okna
         document.getElementById('editModal').style.display = 'flex';
         
     } catch (error) {
@@ -409,6 +417,9 @@ document.getElementById('editFilamentForm')?.addEventListener('submit', async (e
     }
 });
 
+// ============================================
+// 🗑️ MAZÁNÍ FILAMENTU
+// ============================================
 async function deleteFilament(id) {
     if (!confirm('🗑️ Opravdu smazat tento filament?')) return;
     
@@ -444,6 +455,9 @@ async function deleteFilament(id) {
     }
 }
 
+// ============================================
+// 📊 OSTATNÍ FUNKCE
+// ============================================
 async function odecistFilament() {
     const id = document.getElementById('filamentSelect').value;
     const metry = parseFloat(document.getElementById('spotreba').value);
@@ -530,6 +544,7 @@ document.querySelector('.hamburger')?.addEventListener('click', function() {
     document.querySelector('nav ul').classList.toggle('open');
 });
 
+// Kliknutí mimo modální okno ho zavře
 document.getElementById('editModal')?.addEventListener('click', function(e) {
     if (e.target === this) {
         closeEditModal();
