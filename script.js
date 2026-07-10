@@ -507,7 +507,7 @@ async function deleteFromEdit() {
         if (!response.ok) {
             const errorData = await response.text();
             console.error('Chyba při mazání:', response.status, errorData);
-            alert('Chyba: ' + response.status);
+            alert('Chyba: ' + response.status + ' - ' + errorData);
             return;
         }
         
@@ -693,7 +693,7 @@ async function loadModels() {
                         </div>
                         <div class="model-info">
                             <h3>${m.nazev}</h3>
-                            <p class="model-price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${m.cena} Kč</p>
+                            <div class="model-price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${m.cena} Kč</div>
                         </div>
                     </div>
                 `;
@@ -867,6 +867,8 @@ async function deleteModelFromEdit() {
             return;
         }
         
+        console.log('Mažu model ID:', id);
+        
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/modely?id=eq.${id}`, {
             method: 'DELETE',
             headers: {
@@ -879,11 +881,12 @@ async function deleteModelFromEdit() {
         if (!response.ok) {
             const errorData = await response.text();
             console.error('Chyba při mazání:', response.status, errorData);
-            alert('Chyba: ' + response.status);
+            alert('Chyba: ' + response.status + ' - ' + errorData);
             return;
         }
         
-        alert('Model smazán!');
+        console.log('Model smazán!');
+        alert('Model byl úspěšně smazán!');
         loadModels();
         
     } catch (error) {
