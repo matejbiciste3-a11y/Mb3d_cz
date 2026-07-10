@@ -47,26 +47,35 @@
                     <form id="addStlForm">
                         <div class="form-row">
                             <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Název *</label>
                                 <input type="text" id="stlNazev" placeholder="Název" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-crown"></i> Cena (Kč) *</label>
+                                <input type="number" id="stlCena" placeholder="Cena (Kč)" step="1" required>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group" style="flex: 2;">
+                                <label><i class="fas fa-align-left"></i> Popis</label>
                                 <input type="text" id="stlPopis" placeholder="Popis (nepovinné)">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group" style="flex: 2;">
-                                <input type="file" id="stlFile" accept=".stl,.3mf,.gcode" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
-                                <small style="color: var(--text-muted);">Nahraj STL soubor</small>
+                                <label><i class="fas fa-file"></i> STL soubor *</label>
+                                <input type="file" id="stlFile" accept=".stl,.3mf,.gcode" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;" required>
+                                <small style="color: var(--text-muted);">Nahraj STL soubor (povinné)</small>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group" style="flex: 2;">
+                                <label><i class="fas fa-image"></i> Obrázek</label>
                                 <input type="file" id="stlImageFile" accept="image/*" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
                                 <small style="color: var(--text-muted);">Nahraj obrázek (nepovinné)</small>
                             </div>
                             <div class="form-group" style="flex: 1;">
+                                <label><i class="fas fa-link"></i> URL obrázku</label>
                                 <input type="text" id="stlObrazek" placeholder="Nebo URL obrázku">
                             </div>
                         </div>
@@ -87,20 +96,29 @@
             <form id="editStlForm">
                 <input type="hidden" id="editStlId">
                 <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Název *</label>
                     <input type="text" id="editStlNazev" placeholder="Název" required>
                 </div>
                 <div class="form-group">
+                    <label><i class="fas fa-crown"></i> Cena (Kč) *</label>
+                    <input type="number" id="editStlCena" placeholder="Cena (Kč)" step="1" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-align-left"></i> Popis</label>
                     <input type="text" id="editStlPopis" placeholder="Popis (nepovinné)">
                 </div>
                 <div class="form-group">
+                    <label><i class="fas fa-file"></i> Nový STL soubor</label>
                     <input type="file" id="editStlFile" accept=".stl,.3mf,.gcode" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
                     <small style="color: var(--text-muted);">Nahraj nový STL (nepovinné)</small>
                 </div>
                 <div class="form-group">
+                    <label><i class="fas fa-image"></i> Nový obrázek</label>
                     <input type="file" id="editStlImageFile" accept="image/*" style="padding: 8px; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); width: 100%;">
                     <small style="color: var(--text-muted);">Nahraj nový obrázek (nepovinné)</small>
                 </div>
                 <div class="form-group">
+                    <label><i class="fas fa-link"></i> URL obrázku</label>
                     <input type="text" id="editStlObrazek" placeholder="Nebo URL obrázku">
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
