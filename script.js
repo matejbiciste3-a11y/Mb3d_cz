@@ -273,13 +273,40 @@ function checkPageAccess() {
     
     if (!authGuard || !protectedContent) return true;
     
-    if (path.includes('index.html') || path.includes('login.html') || path === '/' || path === '') {
+    if (path.includes('index.html') || path === '/' || path === '') {
         authGuard.style.display = 'none';
         protectedContent.style.display = 'block';
         return true;
     }
     
-    if (path.includes('cenik.html') || path.includes('stl.html')) {
+    if (path.includes('login.html')) {
+        if (isAuthenticated()) {
+            window.location.href = 'filamenty.html';
+            return false;
+        }
+        authGuard.style.display = 'none';
+        protectedContent.style.display = 'block';
+        return true;
+    }
+    
+    if (path.includes('filamenty.html')) {
+        authGuard.style.display = 'none';
+        protectedContent.style.display = 'block';
+        return true;
+    }
+    
+    if (path.includes('cenik.html')) {
+        if (!isAuthenticated()) {
+            authGuard.style.display = 'flex';
+            protectedContent.style.display = 'none';
+            return false;
+        }
+        authGuard.style.display = 'none';
+        protectedContent.style.display = 'block';
+        return true;
+    }
+    
+    if (path.includes('stl.html')) {
         if (!isAdmin()) {
             authGuard.style.display = 'flex';
             protectedContent.style.display = 'none';
@@ -290,7 +317,18 @@ function checkPageAccess() {
         return true;
     }
     
-    if (path.includes('filamenty.html') || path.includes('naklady.html') || path.includes('profile.html')) {
+    if (path.includes('naklady.html')) {
+        if (!isAuthenticated()) {
+            authGuard.style.display = 'flex';
+            protectedContent.style.display = 'none';
+            return false;
+        }
+        authGuard.style.display = 'none';
+        protectedContent.style.display = 'block';
+        return true;
+    }
+    
+    if (path.includes('profile.html')) {
         if (!isAuthenticated()) {
             authGuard.style.display = 'flex';
             protectedContent.style.display = 'none';
@@ -1330,28 +1368,36 @@ async function loadUsers() {
             return;
         }
         
-        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/user_profiles`, {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/admin/users`, {
             headers: {
                 'apikey': CONFIG.SUPABASE_KEY,
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba načítání uživatelů:', errorData);
+            throw new Error('Nepodařilo se načíst uživatele');
+        }
+        
         const data = await response.json();
-        console.log('Načteno uživatelů:', data.length);
+        console.log('Načteno uživatelů:', data.users?.length || 0);
         
         const tbody = document.getElementById('usersTableBody');
         if (tbody) {
             tbody.innerHTML = '';
             
-            if (data.length === 0) {
+            if (!data.users || data.users.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="loading">Žádní uživatelé</td></tr>`;
                 return;
             }
             
-            data.forEach(u => {
-                const roleText = u.role === 'admin' ? 'Administrátor' : 'Uživatel';
-                const roleColor = u.role === 'admin' ? '#ff6b00' : '#00cc66';
+            data.users.forEach(u => {
+                const role = u.user_metadata?.role || u.raw_user_meta_data?.role || 'user';
+                const roleText = role === 'admin' ? 'Administrátor' : 'Uživatel';
+                const roleColor = role === 'admin' ? '#ff6b00' : '#00cc66';
                 const isCurrentUser = u.email === currentUser?.email;
                 
                 tbody.innerHTML += `
@@ -1370,6 +1416,10 @@ async function loadUsers() {
         }
     } catch (error) {
         console.error('Chyba načítání uživatelů:', error);
+        const tbody = document.getElementById('usersTableBody');
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="4" class="loading">Chyba načítání: ${error.message}</td></tr>`;
+        }
     }
 }
 
