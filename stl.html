@@ -18,6 +18,7 @@
     <div id="protectedContent">
         <nav>
             <a href="index.html" class="logo">
+                <img src="logo.png" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
                 <span class="logo-text">Mb3D_CZ</span>
             </a>
             <ul>
@@ -49,6 +50,10 @@
                             <div class="form-group">
                                 <label><i class="fas fa-tag"></i> Název *</label>
                                 <input type="text" id="stlNazev" placeholder="Název" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-crown"></i> Cena (Kč) *</label>
+                                <input type="number" id="stlCena" placeholder="Cena (Kč)" step="1" required>
                             </div>
                         </div>
                         <div class="form-row">
@@ -94,6 +99,10 @@
                 <div class="form-group">
                     <label><i class="fas fa-tag"></i> Název *</label>
                     <input type="text" id="editStlNazev" placeholder="Název" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-crown"></i> Cena (Kč) *</label>
+                    <input type="number" id="editStlCena" placeholder="Cena (Kč)" step="1" required>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-align-left"></i> Popis</label>
