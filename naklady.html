@@ -18,7 +18,7 @@
         <nav>
             <a href="index.html" class="logo">
                 <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
-                <span>Mb3D_CZ</span>
+                <span class="logo-text">Mb3D_CZ</span>
             </a>
             <ul>
                 <li><a href="index.html">Domů</a></li>
@@ -40,54 +40,53 @@
             <h1><i class="fas fa-chart-pie"></i> Kalkulačka nákladů</h1>
             
             <div class="cost-calculator">
-                <div class="form-group">
-                    <label><i class="fas fa-cog"></i> Materiál</label>
-                    <select id="costMaterial">
-                        <option value="PLA">PLA</option>
-                        <option value="PETG">PETG</option>
-                        <option value="ABS">ABS</option>
-                        <option value="ASA">ASA</option>
-                        <option value="TPU">TPU</option>
-                        <option value="Nylon">Nylon</option>
-                        <option value="PC">Polycarbonate (PC)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-weight"></i> Hmotnost (g)</label>
-                    <input type="number" id="costWeight" placeholder="Zadej hmotnost v g" value="100">
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-clock"></i> Čas tisku (hodiny)</label>
-                    <input type="number" id="costTime" placeholder="Zadej čas v hodinách" value="2">
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-coins"></i> Cena filamentu (Kč/kg)</label>
-                    <input type="number" id="costFilamentPrice" placeholder="Cena za kg" value="500">
-                </div>
-                
-                <button onclick="calculateCost()" class="btn-primary"><i class="fas fa-calculator"></i> Vypočítat</button>
-                
-                <div id="costResult" class="result-box">
-                    <h3><i class="fas fa-chart-bar"></i> Výsledek</h3>
-                    <div class="cost-details">
-                        <p><span>Cena filamentu:</span> <span id="filamentCost">0 Kč</span></p>
-                        <p><span>Cena elektřiny:</span> <span id="electricCost">0 Kč</span></p>
-                        <p><span>Celková cena:</span> <span id="totalCost">0 Kč</span></p>
-                        <p><span>Cena za gram:</span> <span id="costPerGram">0 Kč</span></p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-ruler"></i> Délka filamentu (metry)</label>
+                        <input type="number" id="costMeters" placeholder="Zadej metry" step="0.1" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-cog"></i> Materiál</label>
+                        <select id="costMaterial">
+                            <option value="PLA">PLA</option>
+                            <option value="PETG">PETG</option>
+                            <option value="ABS">ABS</option>
+                            <option value="ASA">ASA</option>
+                            <option value="TPU">TPU</option>
+                            <option value="Nylon">Nylon</option>
+                            <option value="PC">Polycarbonate (PC)</option>
+                        </select>
                     </div>
                 </div>
-
-                <div class="note-box" style="margin-top: 20px;">
-                    <h3><i class="fas fa-lightbulb"></i> Předpoklady výpočtu</h3>
-                    <ul>
-                        <li>Cena elektřiny: 5 Kč / kWh</li>
-                        <li>Průměrná spotřeba tiskárny: 150 W</li>
-                        <li>Cena filamentu je uvedena za 1 kg</li>
-                        <li>Výsledek je orientační</li>
-                    </ul>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Čas tisku (hodiny)</label>
+                        <input type="number" id="costTime" placeholder="Zadej čas v hodinách" step="0.1" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-coins"></i> Cena filamentu (Kč/kg)</label>
+                        <input type="number" id="costFilamentPrice" placeholder="Cena za kg" step="1" value="500">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-weight"></i> Hmotnost na metr (g/m)</label>
+                        <input type="number" id="costGramPerMeter" placeholder="g/m" step="0.1" value="3">
+                    </div>
+                </div>
+                <button onclick="calculateCost()" class="btn-primary" style="width: 100%; justify-content: center;">
+                    <i class="fas fa-calculator"></i> Vypočítat náklady
+                </button>
+                
+                <div id="costResult" class="result-box" style="margin-top: 20px;">
+                    <h3><i class="fas fa-chart-bar"></i> Výsledek</h3>
+                    <div class="cost-details">
+                        <p><span>Spotřeba filamentu:</span> <span id="filamentUsage">0 g</span></p>
+                        <p><span>Cena filamentu:</span> <span id="filamentCost">0 Kč</span></p>
+                        <p><span>Cena elektřiny:</span> <span id="electricCost">0 Kč</span></p>
+                        <p style="font-size: 20px; font-weight: 700; border-top: 2px solid var(--primary); padding-top: 12px; margin-top: 8px;">
+                            <span style="color: var(--text-primary);">Celková cena:</span> 
+                            <span id="totalCost" style="color: #ffd700; font-size: 24px;">0 Kč</span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

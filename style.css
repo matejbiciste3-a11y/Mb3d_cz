@@ -860,6 +860,27 @@ h2 i {
     margin-bottom: 12px;
 }
 
+.cost-details p {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cost-details p:last-child {
+    border-bottom: none;
+}
+
+.cost-details span:last-child {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.cost-details p:last-child span:last-child {
+    color: #ffd700;
+    font-weight: 700;
+}
+
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -972,22 +993,6 @@ h2 i {
     padding: 30px;
     border-radius: var(--radius);
     border: 1px solid var(--border-color);
-}
-
-.cost-details p {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.cost-details p:last-child {
-    border-bottom: none;
-}
-
-.cost-details span:last-child {
-    color: var(--primary);
-    font-weight: 700;
 }
 
 .login-container {

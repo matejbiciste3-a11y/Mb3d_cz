@@ -335,17 +335,12 @@ async function loadFilaments() {
         const totalFilaments = document.getElementById('totalFilaments');
         const totalMeters = document.getElementById('totalMeters');
         
-        console.log('totalFilaments element:', totalFilaments);
-        console.log('totalMeters element:', totalMeters);
-        
         if (totalFilaments) {
             totalFilaments.textContent = data.length;
-            console.log('Nastaveno totalFilaments:', data.length);
         }
         if (totalMeters) {
             const sum = data.reduce((acc, f) => acc + f.aktualni, 0);
             totalMeters.textContent = Math.round(sum);
-            console.log('Nastaveno totalMeters:', Math.round(sum));
         }
         
     } catch (error) {
@@ -684,19 +679,20 @@ function searchGlobal() {
 }
 
 function calculateCost() {
-    const weight = parseFloat(document.getElementById('costWeight').value) || 0;
+    const meters = parseFloat(document.getElementById('costMeters').value) || 0;
     const time = parseFloat(document.getElementById('costTime').value) || 0;
     const filamentPrice = parseFloat(document.getElementById('costFilamentPrice').value) || 0;
+    const gramPerMeter = parseFloat(document.getElementById('costGramPerMeter').value) || 3;
     
-    const filamentCost = (weight / 1000) * filamentPrice;
+    const filamentUsage = meters * gramPerMeter;
+    const filamentCost = (filamentUsage / 1000) * filamentPrice;
     const electricCost = time * 5;
     const totalCost = filamentCost + electricCost;
-    const costPerGram = weight > 0 ? totalCost / weight : 0;
     
+    document.getElementById('filamentUsage').textContent = filamentUsage.toFixed(1) + ' g';
     document.getElementById('filamentCost').textContent = filamentCost.toFixed(2) + ' Kč';
     document.getElementById('electricCost').textContent = electricCost.toFixed(2) + ' Kč';
     document.getElementById('totalCost').textContent = totalCost.toFixed(2) + ' Kč';
-    document.getElementById('costPerGram').textContent = costPerGram.toFixed(2) + ' Kč';
 }
 
 async function loadModels() {
