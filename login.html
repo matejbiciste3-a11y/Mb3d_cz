@@ -10,7 +10,7 @@
 <body>
     <nav>
         <a href="index.html" class="logo">
-            <img src="70690e3f-d993-44bb-898c-eb245edbb22f.jpg" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
+            <img src="logo.png" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
             <span>Mb3D_CZ</span>
         </a>
         <ul>
@@ -19,6 +19,7 @@
             <li><a href="cenik.html">Ceník</a></li>
             <li><a href="stl.html">STL soubory</a></li>
             <li><a href="naklady.html">Náklady</a></li>
+            <li><a href="profile.html">Profil</a></li>
             <li><a href="login.html" class="active">Přihlášení</a></li>
             <li><input type="text" placeholder="Hledat..."></li>
         </ul>
@@ -50,9 +51,14 @@
             <div id="userInfo" style="display: none; margin-top: 15px; padding: 20px; background: var(--bg-card); border-radius: var(--radius-sm); text-align: center; border: 1px solid var(--border-color);">
                 <p><i class="fas fa-check-circle" style="color: #00cc66;"></i> Přihlášen jako: <strong id="currentUserEmail"></strong></p>
                 <p style="font-size: 14px; color: var(--text-secondary);">Role: <span id="currentUserRole"></span></p>
-                <button onclick="logoutUser()" class="btn-warning" style="margin-top: 10px; width: 100%; justify-content: center;">
-                    <i class="fas fa-sign-out-alt"></i> Odhlásit
-                </button>
+                <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                    <button onclick="window.location.href='profile.html'" class="btn-primary" style="flex: 1;">
+                        <i class="fas fa-user"></i> Můj profil
+                    </button>
+                    <button onclick="logoutUser()" class="btn-warning" style="flex: 1;">
+                        <i class="fas fa-sign-out-alt"></i> Odhlásit
+                    </button>
+                </div>
             </div>
 
             <div class="login-info">

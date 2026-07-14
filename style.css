@@ -1253,6 +1253,17 @@ footer {
     margin-right: 6px;
 }
 
+.profile-card p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.profile-card p strong {
+    color: var(--text-secondary);
+    min-width: 120px;
+    display: inline-block;
+}
+
 @media (max-width: 1200px) {
     .filament-grid {
         grid-template-columns: repeat(4, 1fr);

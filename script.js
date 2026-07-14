@@ -147,6 +147,17 @@ function updateNav() {
             dropdown.className = 'dropdown-menu';
             dropdown.style.cssText = 'display: none; position: absolute; right: 0; top: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 0; min-width: 180px; box-shadow: var(--shadow); z-index: 1000;';
             
+            const profileItem = document.createElement('a');
+            profileItem.href = 'profile.html';
+            profileItem.innerHTML = '<i class="fas fa-user"></i> Můj profil';
+            profileItem.style.cssText = 'display: block; padding: 10px 20px; color: var(--text-primary); text-decoration: none; transition: var(--transition);';
+            profileItem.onmouseover = function() {
+                this.style.background = 'var(--bg-card-hover)';
+            };
+            profileItem.onmouseout = function() {
+                this.style.background = 'transparent';
+            };
+            
             const logoutItem = document.createElement('a');
             logoutItem.href = '#';
             logoutItem.innerHTML = '<i class="fas fa-sign-out-alt"></i> Odhlásit se';
@@ -162,6 +173,7 @@ function updateNav() {
                 logoutUser();
             };
             
+            dropdown.appendChild(profileItem);
             dropdown.appendChild(logoutItem);
             parentLi.appendChild(userSpan);
             parentLi.appendChild(dropdown);
@@ -278,7 +290,7 @@ function checkPageAccess() {
         return true;
     }
     
-    if (path.includes('filamenty.html') || path.includes('naklady.html')) {
+    if (path.includes('filamenty.html') || path.includes('naklady.html') || path.includes('profile.html')) {
         if (!isAuthenticated()) {
             authGuard.style.display = 'flex';
             protectedContent.style.display = 'none';
@@ -1283,6 +1295,120 @@ async function deleteStlFromEdit() {
     }
 }
 
+async function loadProfile() {
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return;
+        }
+        
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+            document.getElementById('profileEmail').textContent = user.email;
+            const role = user.user_metadata?.role || user.raw_user_meta_data?.role || 'user';
+            const roleText = role === 'admin' ? 'Administrátor' : 'Uživatel';
+            document.getElementById('profileRole').textContent = roleText;
+            document.getElementById('profileRole').style.color = role === 'admin' ? '#ff6b00' : '#00cc66';
+            
+            if (role === 'admin') {
+                document.getElementById('adminSection').style.display = 'block';
+                loadUsers();
+            }
+        }
+    } catch (error) {
+        console.error('Chyba načítání profilu:', error);
+    }
+}
+
+async function loadUsers() {
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/user_profiles`, {
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log('Načteno uživatelů:', data.length);
+        
+        const tbody = document.getElementById('usersTableBody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="loading">Žádní uživatelé</td></tr>`;
+                return;
+            }
+            
+            data.forEach(u => {
+                const roleText = u.role === 'admin' ? 'Administrátor' : 'Uživatel';
+                const roleColor = u.role === 'admin' ? '#ff6b00' : '#00cc66';
+                const isCurrentUser = u.email === currentUser?.email;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${u.email} ${isCurrentUser ? '<span style="color: var(--primary); font-size: 12px;">(ty)</span>' : ''}</td>
+                        <td style="color: ${roleColor};">${roleText}</td>
+                        <td style="color: var(--text-secondary); font-size: 13px;">${new Date(u.created_at).toLocaleDateString('cs-CZ')}</td>
+                        <td>
+                            ${!isCurrentUser ? `<button onclick="logoutUserById('${u.id}')" class="btn-danger" style="padding: 5px 12px; font-size: 12px;">
+                                <i class="fas fa-sign-out-alt"></i> Odhlásit
+                            </button>` : '<span style="color: var(--text-muted); font-size: 12px;">Aktivní</span>'}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    } catch (error) {
+        console.error('Chyba načítání uživatelů:', error);
+    }
+}
+
+async function logoutUserById(userId) {
+    if (!confirm('Opravdu chcete odhlásit tohoto uživatele?')) {
+        return;
+    }
+    
+    try {
+        const token = await getAccessToken();
+        if (!token) {
+            alert('Nejsi přihlášen!');
+            return;
+        }
+        
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': CONFIG.SUPABASE_KEY,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Chyba při odhlašování:', errorData);
+            alert('Chyba při odhlašování uživatele');
+            return;
+        }
+        
+        alert('Uživatel byl odhlášen!');
+        loadUsers();
+    } catch (error) {
+        console.error('Chyba:', error);
+        alert('Chyba: ' + error.message);
+    }
+}
+
 document.querySelector('.hamburger')?.addEventListener('click', function() {
     document.querySelector('nav ul').classList.toggle('open');
 });
@@ -1310,6 +1436,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         if (document.getElementById('totalFilaments') || document.getElementById('totalMeters')) {
             loadFilaments();
+        }
+        if (document.getElementById('profileEmail')) {
+            loadProfile();
         }
     } else {
         console.error('Supabase není inicializován!');

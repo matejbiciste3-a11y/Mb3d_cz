@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mb3D_CZ | Profil</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div id="authGuard">
+        <i class="fas fa-lock"></i>
+        <h1>Přístup zamítnut</h1>
+        <p>Pro přístup k této stránce se musíš <a href="login.html">přihlásit</a>.</p>
+    </div>
+
+    <div id="protectedContent">
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Mb3D_CZ" class="logo-img" onerror="this.style.display='none'">
+                <span>Mb3D_CZ</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Domů</a></li>
+                <li><a href="filamenty.html">Filamenty</a></li>
+                <li><a href="cenik.html">Ceník</a></li>
+                <li><a href="stl.html">STL soubory</a></li>
+                <li><a href="naklady.html">Náklady</a></li>
+                <li><a href="profile.html" class="active">Profil</a></li>
+                <li><a href="login.html">Přihlášení</a></li>
+                <li><input type="text" placeholder="Hledat..."></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+
+        <div class="container">
+            <h1><i class="fas fa-user-circle"></i> Můj profil</h1>
+            
+            <div class="profile-card form-card">
+                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                    <div style="flex: 1;">
+                        <p><strong><i class="fas fa-envelope"></i> Email:</strong> <span id="profileEmail">-</span></p>
+                        <p><strong><i class="fas fa-user-tag"></i> Role:</strong> <span id="profileRole">-</span></p>
+                    </div>
+                    <div>
+                        <button onclick="logoutUser()" class="btn-warning">
+                            <i class="fas fa-sign-out-alt"></i> Odhlásit se
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminSection" style="display: none;">
+                <h2><i class="fas fa-users-cog"></i> Správa uživatelů</h2>
+                
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Datum registrace</th>
+                                <th>Akce</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="4" class="loading">Načítání...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Mb3D_CZ &bull; Všechna práva vyhrazena</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
