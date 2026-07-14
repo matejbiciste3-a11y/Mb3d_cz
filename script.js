@@ -292,6 +292,12 @@ function checkPageAccess() {
     if (path.includes('filamenty.html')) {
         authGuard.style.display = 'none';
         protectedContent.style.display = 'block';
+        setTimeout(() => {
+            const addForm = document.getElementById('addFormContainer');
+            if (addForm) {
+                addForm.style.display = isAdmin() ? 'block' : 'none';
+            }
+        }, 100);
         return true;
     }
     
