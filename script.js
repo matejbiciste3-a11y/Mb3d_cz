@@ -330,16 +330,24 @@ async function loadFilaments() {
                     select.innerHTML += `<option value="${f.id}">${f.vyrobce} - ${f.barva} (${f.aktualni}m) - ${f.cena_kg || 0} Kč/kg</option>`;
                 });
             }
-
-            const totalFilaments = document.getElementById('totalFilaments');
-            const totalMeters = document.getElementById('totalMeters');
-            
-            if (totalFilaments) totalFilaments.textContent = data.length;
-            if (totalMeters) {
-                const sum = data.reduce((acc, f) => acc + f.aktualni, 0);
-                totalMeters.textContent = Math.round(sum);
-            }
         }
+        
+        const totalFilaments = document.getElementById('totalFilaments');
+        const totalMeters = document.getElementById('totalMeters');
+        
+        console.log('totalFilaments element:', totalFilaments);
+        console.log('totalMeters element:', totalMeters);
+        
+        if (totalFilaments) {
+            totalFilaments.textContent = data.length;
+            console.log('Nastaveno totalFilaments:', data.length);
+        }
+        if (totalMeters) {
+            const sum = data.reduce((acc, f) => acc + f.aktualni, 0);
+            totalMeters.textContent = Math.round(sum);
+            console.log('Nastaveno totalMeters:', Math.round(sum));
+        }
+        
     } catch (error) {
         console.error('Chyba načítání filamentů:', error);
     }
@@ -1254,6 +1262,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     if (typeof supabase !== 'undefined' && supabase && supabase.auth) {
         await checkUser();
+        
         if (document.getElementById('filamentGrid')) {
             loadFilaments();
         }
@@ -1263,7 +1272,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (document.getElementById('stlGrid')) {
             loadStl();
         }
-        if (document.getElementById('totalFilaments')) {
+        if (document.getElementById('totalFilaments') || document.getElementById('totalMeters')) {
             loadFilaments();
         }
     } else {
