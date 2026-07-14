@@ -333,16 +333,11 @@ async function loadFilaments() {
 
             const totalFilaments = document.getElementById('totalFilaments');
             const totalMeters = document.getElementById('totalMeters');
-            const totalPrints = document.getElementById('totalPrints');
             
             if (totalFilaments) totalFilaments.textContent = data.length;
             if (totalMeters) {
                 const sum = data.reduce((acc, f) => acc + f.aktualni, 0);
                 totalMeters.textContent = Math.round(sum);
-            }
-            if (totalPrints) {
-                const sum = data.reduce((acc, f) => acc + (f.zaklad - f.aktualni), 0);
-                totalPrints.textContent = Math.round(sum);
             }
         }
     } catch (error) {
