@@ -1034,7 +1034,6 @@ document.getElementById('addStlForm')?.addEventListener('submit', async (e) => {
     }
     
     const nazev = document.getElementById('stlNazev');
-    const cena = document.getElementById('stlCena');
     const popis = document.getElementById('stlPopis');
     
     if (!nazev || !cena) {
@@ -1045,7 +1044,6 @@ document.getElementById('addStlForm')?.addEventListener('submit', async (e) => {
     const data = {
         nazev: nazev.value,
         popis: popis?.value || null,
-        cena: parseFloat(cena.value) || 0,
         obrazek: imageUrl,
         stl_url: stlUrl
     };
@@ -1103,7 +1101,6 @@ async function openEditStlModal(id) {
         
         const idEl = document.getElementById('editStlId');
         const nazevEl = document.getElementById('editStlNazev');
-        const cenaEl = document.getElementById('editStlCena');
         const popisEl = document.getElementById('editStlPopis');
         const obrazekEl = document.getElementById('editStlObrazek');
         const fileEl = document.getElementById('editStlFile');
@@ -1117,7 +1114,6 @@ async function openEditStlModal(id) {
         
         idEl.value = stl.id;
         nazevEl.value = stl.nazev;
-        cenaEl.value = stl.cena || 0;
         if (popisEl) popisEl.value = stl.popis || '';
         if (obrazekEl) obrazekEl.value = stl.obrazek || '';
         if (fileEl) fileEl.value = '';
@@ -1162,7 +1158,6 @@ document.getElementById('editStlForm')?.addEventListener('submit', async (e) => 
     }
     
     const nazev = document.getElementById('editStlNazev');
-    const cena = document.getElementById('editStlCena');
     const popis = document.getElementById('editStlPopis');
     
     if (!nazev || !cena) {
@@ -1173,7 +1168,6 @@ document.getElementById('editStlForm')?.addEventListener('submit', async (e) => 
     const data = {
         nazev: nazev.value,
         popis: popis?.value || null,
-        cena: parseFloat(cena.value) || 0,
         obrazek: imageUrl
     };
     
