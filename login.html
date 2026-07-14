@@ -47,14 +47,19 @@
 
             <div id="authMessage" class="auth-message"></div>
 
-            <div id="userInfo" style="display: none;">
+            <div id="userInfo" style="display: none; margin-top: 15px; padding: 20px; background: var(--bg-card); border-radius: var(--radius-sm); text-align: center; border: 1px solid var(--border-color);">
                 <p><i class="fas fa-check-circle" style="color: #00cc66;"></i> Přihlášen jako: <strong id="currentUserEmail"></strong></p>
                 <p style="font-size: 14px; color: var(--text-secondary);">Role: <span id="currentUserRole"></span></p>
-                <button onclick="logoutUser()" class="btn-warning">
+                <button onclick="logoutUser()" class="btn-warning" style="margin-top: 10px; width: 100%; justify-content: center;">
                     <i class="fas fa-sign-out-alt"></i> Odhlásit
                 </button>
             </div>
 
+            <div class="login-info">
+                <i class="fas fa-info-circle"></i> Admin: admin@mb3d.cz / Admin2024!
+                <br>
+                <i class="fas fa-user"></i> User: bratr@mb3d.cz / Bratr2024!
+            </div>
         </div>
     </div>
 

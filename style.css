@@ -88,6 +88,15 @@ nav {
     transform: scale(1.05) rotate(-3deg);
 }
 
+.logo span {
+    font-size: 24px;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+}
+
 .logo-text {
     font-size: 28px;
     font-weight: 900;
@@ -1341,7 +1350,11 @@ footer {
         letter-spacing: 4px;
     }
     
-    .logo-text {
+    .logo-img {
+        height: 30px;
+    }
+    
+    .logo span {
         font-size: 18px;
     }
     
