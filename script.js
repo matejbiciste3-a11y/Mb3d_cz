@@ -128,8 +128,48 @@ function updateNav() {
     const navLinks = document.querySelectorAll('nav ul li a');
     navLinks.forEach(link => {
         if (link.textContent === 'Přihlášení' && isAuthenticated()) {
-            link.textContent = '👤 ' + currentUser.email;
-            link.href = '#';
+            const parentLi = link.parentElement;
+            link.style.display = 'none';
+            
+            const userSpan = document.createElement('span');
+            userSpan.textContent = '👤 ' + currentUser.email;
+            userSpan.className = 'user-email';
+            userSpan.style.cssText = 'cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); color: var(--text-secondary); transition: var(--transition); display: inline-block;';
+            userSpan.onclick = function(e) {
+                e.stopPropagation();
+                const dropdown = this.nextElementSibling;
+                if (dropdown) {
+                    dropdown.classList.toggle('show');
+                }
+            };
+            
+            const dropdown = document.createElement('div');
+            dropdown.className = 'dropdown-menu';
+            dropdown.style.cssText = 'display: none; position: absolute; right: 0; top: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 0; min-width: 180px; box-shadow: var(--shadow); z-index: 1000;';
+            
+            const logoutItem = document.createElement('a');
+            logoutItem.href = '#';
+            logoutItem.innerHTML = '<i class="fas fa-sign-out-alt"></i> Odhlásit se';
+            logoutItem.style.cssText = 'display: block; padding: 10px 20px; color: var(--text-primary); text-decoration: none; transition: var(--transition);';
+            logoutItem.onmouseover = function() {
+                this.style.background = 'var(--bg-card-hover)';
+            };
+            logoutItem.onmouseout = function() {
+                this.style.background = 'transparent';
+            };
+            logoutItem.onclick = function(e) {
+                e.preventDefault();
+                logoutUser();
+            };
+            
+            dropdown.appendChild(logoutItem);
+            parentLi.appendChild(userSpan);
+            parentLi.appendChild(dropdown);
+            parentLi.style.position = 'relative';
+            
+            document.addEventListener('click', function() {
+                dropdown.classList.remove('show');
+            });
         }
     });
 }
