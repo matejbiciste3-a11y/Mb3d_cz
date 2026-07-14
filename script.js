@@ -1263,6 +1263,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (document.getElementById('stlGrid')) {
             loadStl();
         }
+        if (document.getElementById('totalFilaments')) {
+            loadFilaments();
+        }
     } else {
         console.error('Supabase není inicializován!');
     }
