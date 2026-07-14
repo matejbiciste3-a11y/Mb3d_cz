@@ -354,8 +354,28 @@ async function loadFilaments() {
         if (token) headers['Authorization'] = `Bearer ${token}`;
         
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/filamenty`, { headers });
+        
+        if (!response.ok) {
+            console.log('Nelze načíst filamenty - chyba:', response.status);
+            const grid = document.getElementById('filamentGrid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-lock" style="font-size: 48px; color: var(--primary);"></i>
+                        <p style="margin-top: 15px;">Pro zobrazení filamentů se <a href="login.html" style="color: var(--primary);">přihlas</a>.</p>
+                    </div>
+                `;
+            }
+            return;
+        }
+        
         const data = await response.json();
         console.log('Načteno filamentů:', data.length);
+        
+        if (!Array.isArray(data)) {
+            console.error('Data nejsou pole:', data);
+            return;
+        }
         
         const grid = document.getElementById('filamentGrid');
         if (grid) {
@@ -425,10 +445,10 @@ async function loadFilaments() {
         const totalFilaments = document.getElementById('totalFilaments');
         const totalMeters = document.getElementById('totalMeters');
         
-        if (totalFilaments) {
+        if (totalFilaments && Array.isArray(data)) {
             totalFilaments.textContent = data.length;
         }
-        if (totalMeters) {
+        if (totalMeters && Array.isArray(data)) {
             const sum = data.reduce((acc, f) => acc + f.aktualni, 0);
             totalMeters.textContent = Math.round(sum);
         }
@@ -795,8 +815,28 @@ async function loadModels() {
         if (token) headers['Authorization'] = `Bearer ${token}`;
         
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/modely`, { headers });
+        
+        if (!response.ok) {
+            console.log('Nelze načíst modely - chyba:', response.status);
+            const grid = document.getElementById('modelsGrid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-lock" style="font-size: 48px; color: var(--primary);"></i>
+                        <p style="margin-top: 15px;">Pro zobrazení modelů se <a href="login.html" style="color: var(--primary);">přihlas</a>.</p>
+                    </div>
+                `;
+            }
+            return;
+        }
+        
         const data = await response.json();
         console.log('Modely načteno:', data.length);
+        
+        if (!Array.isArray(data)) {
+            console.error('Data nejsou pole:', data);
+            return;
+        }
         
         const grid = document.getElementById('modelsGrid');
         if (grid) {
@@ -1043,8 +1083,28 @@ async function loadStl() {
         if (token) headers['Authorization'] = `Bearer ${token}`;
         
         const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/stl_soubory`, { headers });
+        
+        if (!response.ok) {
+            console.log('Nelze načíst STL - chyba:', response.status);
+            const grid = document.getElementById('stlGrid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-lock" style="font-size: 48px; color: var(--primary);"></i>
+                        <p style="margin-top: 15px;">Pro zobrazení STL souborů se <a href="login.html" style="color: var(--primary);">přihlas</a>.</p>
+                    </div>
+                `;
+            }
+            return;
+        }
+        
         const data = await response.json();
         console.log('STL načteno:', data.length);
+        
+        if (!Array.isArray(data)) {
+            console.error('Data nejsou pole:', data);
+            return;
+        }
         
         const grid = document.getElementById('stlGrid');
         if (grid) {
