@@ -303,6 +303,12 @@ function checkPageAccess() {
         }
         authGuard.style.display = 'none';
         protectedContent.style.display = 'block';
+        setTimeout(() => {
+            const addForm = document.getElementById('addFormContainer');
+            if (addForm) {
+                addForm.style.display = isAdmin() ? 'block' : 'none';
+            }
+        }, 100);
         return true;
     }
     
@@ -1428,7 +1434,7 @@ async function loadUsers() {
             return;
         }
         
-        const response = await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/admin/users`, {
+        let response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/user_profiles`, {
             headers: {
                 'apikey': CONFIG.SUPABASE_KEY,
                 'Authorization': `Bearer ${token}`,
@@ -1437,25 +1443,37 @@ async function loadUsers() {
         });
         
         if (!response.ok) {
+            console.log('user_profiles neexistuje, používám admin API');
+            response = await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/admin/users`, {
+                headers: {
+                    'apikey': CONFIG.SUPABASE_KEY,
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+        
+        if (!response.ok) {
             const errorData = await response.text();
             console.error('Chyba načítání uživatelů:', errorData);
             throw new Error('Nepodařilo se načíst uživatele');
         }
         
         const data = await response.json();
-        console.log('Načteno uživatelů:', data.users?.length || 0);
+        const users = data.users || data;
+        console.log('Načteno uživatelů:', users.length);
         
         const tbody = document.getElementById('usersTableBody');
         if (tbody) {
             tbody.innerHTML = '';
             
-            if (!data.users || data.users.length === 0) {
+            if (!users || users.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="loading">Žádní uživatelé</td></tr>`;
                 return;
             }
             
-            data.users.forEach(u => {
-                const role = u.user_metadata?.role || u.raw_user_meta_data?.role || 'user';
+            users.forEach(u => {
+                const role = u.raw_user_meta_data?.role || u.user_metadata?.role || 'user';
                 const roleText = role === 'admin' ? 'Administrátor' : 'Uživatel';
                 const roleColor = role === 'admin' ? '#ff6b00' : '#00cc66';
                 const isCurrentUser = u.email === currentUser?.email;
