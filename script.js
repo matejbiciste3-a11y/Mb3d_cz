@@ -991,7 +991,6 @@ async function loadStl() {
                         <div class="stl-info">
                             <h3>${s.nazev}</h3>
                             ${s.popis ? `<p class="stl-popis">${s.popis}</p>` : ''}
-                            <div class="stl-price"><i class="fas fa-crown" style="color: #ffd700;"></i> ${s.cena || 0} Kč</div>
                             <a href="${s.stl_url}" target="_blank" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
                                 <i class="fas fa-download"></i> Stáhnout STL
                             </a>
@@ -1036,8 +1035,8 @@ document.getElementById('addStlForm')?.addEventListener('submit', async (e) => {
     const nazev = document.getElementById('stlNazev');
     const popis = document.getElementById('stlPopis');
     
-    if (!nazev || !cena) {
-        alert('Chyba: Chybí povinné pole!');
+    if (!nazev) {
+        alert('Chyba: Chybí název!');
         return;
     }
     
@@ -1106,7 +1105,7 @@ async function openEditStlModal(id) {
         const fileEl = document.getElementById('editStlFile');
         const imageFileEl = document.getElementById('editStlImageFile');
         
-        if (!idEl || !nazevEl || !cenaEl) {
+        if (!idEl || !nazevEl) {
             console.error('Chybí elementy v edit formuláři!');
             alert('Chyba: Formulář pro editaci není kompletní!');
             return;
@@ -1160,8 +1159,8 @@ document.getElementById('editStlForm')?.addEventListener('submit', async (e) => 
     const nazev = document.getElementById('editStlNazev');
     const popis = document.getElementById('editStlPopis');
     
-    if (!nazev || !cena) {
-        alert('Chyba: Chybí povinné pole!');
+    if (!nazev) {
+        alert('Chyba: Chybí název!');
         return;
     }
     
