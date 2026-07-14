@@ -1,3 +1,5 @@
+const supabase = window.supabaseClient || window.supabase;
+
 if (typeof supabase === 'undefined' || !supabase.auth) {
     console.error('Supabase není inicializován');
 } else {
